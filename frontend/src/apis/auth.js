@@ -9,7 +9,27 @@ export const registerUser = async (data) => {
     body: JSON.stringify(data),
   });
   if (!response.ok) {
-    throw new Error('Failed to fetch user data');
+    return response.text().then((errorMessage) => {
+      const message = JSON.parse(errorMessage);
+      throw new Error(message.error);
+    });
+  }
+  return response.json();
+};
+
+export const login = async (data) => {
+  const response = await fetch(`${BACKEND_URL}/admin/auth/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    return response.text().then((errorMessage) => {
+      const message = JSON.parse(errorMessage);
+      throw new Error(message.error);
+    });
   }
   return response.json();
 };

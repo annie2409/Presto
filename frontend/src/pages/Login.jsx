@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
-import { Box, Button, TextField, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Alert, Box, Button, TextField, Typography } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
+import { login } from '../apis/auth';
+import { TOKEN } from '../utils/storage';
+import { useMutation } from 'react-query';
 
 export const Login = () => {
+  const navigation = useNavigate();
+
   const [inputs, setInputs] = useState({
     email: '',
     password: '',
@@ -15,9 +20,27 @@ export const Login = () => {
     }));
   };
 
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const { mutate, isLoading } = useMutation(login, {
+    onSuccess: (data) => {
+      localStorage.setItem(TOKEN, data.token);
+      navigation('/home');
+    },
+    onError: (data) => {
+      setErrorMessage(data.message);
+    },
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    mutate(inputs);
+  };
+
   return (
     <div>
-      <form>
+      <form onSubmit={handleSubmit}>
         <Box
           display="flex"
           flexDirection="column"
@@ -40,6 +63,9 @@ export const Login = () => {
           <Typography variant="h2" padding={3} textAlign="center">
             Login
           </Typography>
+          {errorMessage !== '' && (
+            <Alert severity="error">{errorMessage}</Alert>
+          )}
           <TextField
             variant="outlined"
             placeholder="Email"
@@ -63,6 +89,8 @@ export const Login = () => {
           <Button
             variant="contained"
             color="primary"
+            type="submit"
+            disabled={isLoading}
             sx={{
               marginTop: 3,
             }}

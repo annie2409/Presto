@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
 import { Box, Button, TextField, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from 'react-query';
 import { registerUser } from '../apis/auth.js';
+import { TOKEN } from '../utils/storage.js';
+import Alert from '@mui/material/Alert';
 
 export const Register = () => {
+  const navigation = useNavigate();
+
   const [inputs, setInputs] = useState({
     name: '',
     email: '',
     password: '',
   });
+
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleInputChange = (e) => {
     setInputs((prevState) => ({
@@ -20,12 +26,11 @@ export const Register = () => {
 
   const { mutate, isLoading } = useMutation(registerUser, {
     onSuccess: (data) => {
-      console.log(data);
-      console.log('succes, go to home page here');
+      localStorage.setItem(TOKEN, data.token);
+      navigation('/home');
     },
     onError: (data) => {
-      console.log('error');
-      console.log(data);
+      setErrorMessage(data.message);
     },
   });
 
@@ -60,6 +65,9 @@ export const Register = () => {
           <Typography variant="h2" padding={3} textAlign="center">
             Sign up
           </Typography>
+          {errorMessage !== '' && (
+            <Alert severity="error">{errorMessage}</Alert>
+          )}
           <TextField
             variant="outlined"
             placeholder="Name"
