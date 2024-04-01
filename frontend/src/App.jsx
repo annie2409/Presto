@@ -3,10 +3,11 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom'; // Import Routes and Route components
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
-import { Home } from './pages/Home';
+import { Dashboard } from './pages/Dashboard';
 import { ErrorBoundary } from 'react-error-boundary';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { AuthProvider } from './context/AuthContext';
+import { dashboardPage, loginPage, registerPage } from './utils/routes';
 
 const queryClient = new QueryClient();
 
@@ -28,9 +29,9 @@ const App = () => {
         <ErrorBoundary fallbackRender={fallbackRender}>
           <BrowserRouter>
             <Routes>
-              <Route path="/home" element={<Home />}/>
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+              <Route path={dashboardPage} element={<Dashboard />}/>
+              <Route path={loginPage} element={<Login />} />
+              <Route path={registerPage} element={<Register />} />
             </Routes>
           </BrowserRouter>
         </ErrorBoundary>
@@ -39,6 +40,6 @@ const App = () => {
   );
 };
 
-export const navBarPages = [{ to: '/home', text: 'Home' }];
+export const navBarPages = [{ to: dashboardPage, text: 'Dashboard' }];
 
 export default App;

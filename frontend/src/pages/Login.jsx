@@ -5,6 +5,7 @@ import { login } from '../apis/auth';
 import { useMutation } from 'react-query';
 import { useAuthContext } from '../context/AuthContext';
 import { LoggedInUser } from '../data/LoggedInUser';
+import { dashboardPage } from '../utils/routes';
 
 export const Login = () => {
   const navigation = useNavigate();
@@ -27,7 +28,7 @@ export const Login = () => {
   const { mutate, isLoading } = useMutation(login, {
     onSuccess: (data) => {
       updateUser(new LoggedInUser(inputs.email, data.token));
-      navigation('/home');
+      navigation(dashboardPage);
     },
     onError: (data) => {
       setErrorMessage(data.message);

@@ -6,6 +6,7 @@ import { registerUser } from '../apis/auth.js';
 import Alert from '@mui/material/Alert';
 import { LoggedInUser } from '../data/LoggedInUser.js';
 import { useAuthContext } from '../context/AuthContext.jsx';
+import { dashboardPage } from '../utils/routes.js';
 
 export const Register = () => {
   const navigation = useNavigate();
@@ -30,7 +31,7 @@ export const Register = () => {
   const { mutate, isLoading } = useMutation(registerUser, {
     onSuccess: (data) => {
       updateUser(new LoggedInUser(inputs.email, data.token));
-      navigation('/home');
+      navigation(dashboardPage);
     },
     onError: (data) => {
       setErrorMessage(data.message);
