@@ -3,8 +3,16 @@ import NavBar from '../components/NavBar';
 import { useAuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { loginPage } from '../utils/routes';
-import { Button, Modal, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Modal,
+  Typography,
+} from '@mui/material';
 import { NewPresentationForm } from '../components/NewPresentationForm';
+import { UserDataProvider } from '../context/UserDataContext';
+import { PresentationCardsList } from '../components/PresentationCardsList';
 
 export const Dashboard = () => {
   const navigation = useNavigate();
@@ -15,16 +23,32 @@ export const Dashboard = () => {
     if (!isLoggedIn) {
       navigation(loginPage);
     }
-  }, []);
+  }, [user]);
 
   const [isNewPresentationModalOpen, setIsNewPresentationModalOpen] =
     useState(false);
 
+  if (!isLoggedIn) {
+    return (
+      <Box
+        style={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   return (
-    <div>
+    <UserDataProvider>
       <NavBar />
       <div>
-        <Typography variant="h1">Dashboard</Typography>
+        <Typography variant="h3">Dashboard</Typography>
+        <Typography variant="subtitle1">{`Welcome ${user.email}`}</Typography>
         <Button
           variant="contained"
           color="warning"
@@ -37,9 +61,12 @@ export const Dashboard = () => {
           onClose={() => setIsNewPresentationModalOpen(false)}
           aria-labelledby="modal-new-presentation-title"
         >
-          <NewPresentationForm></NewPresentationForm>
+          <NewPresentationForm
+            onSubmit={() => setIsNewPresentationModalOpen(false)}
+          />
         </Modal>
+        <PresentationCardsList />
       </div>
-    </div>
+    </UserDataProvider>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { LOGGED_IN_USER } from '../utils/storage.js';
+import { LOGGED_IN_USER } from '../utils/constants.js';
 import { LoggedInUser } from '../data/LoggedInUser.js';
 
 const currentLoggedInUser = JSON.parse(sessionStorage.getItem(LOGGED_IN_USER));
