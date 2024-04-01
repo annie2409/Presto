@@ -16,6 +16,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 import { useMutation } from 'react-query';
 import { logout } from '../apis/auth';
+import { loginPage } from '../utils/routes';
 
 const NavBar = () => {
   const { user, updateUser } = useAuthContext();
@@ -34,7 +35,7 @@ const NavBar = () => {
   const { mutate, isLoading } = useMutation(logout, {
     onSuccess: () => {
       updateUser(null);
-      navigation('/login');
+      navigation(loginPage);
     },
     onError: (data) => {
       alert(data.message);
@@ -47,7 +48,7 @@ const NavBar = () => {
   };
 
   return (
-    <AppBar>
+    <AppBar position="static">
       <Toolbar>
         <Typography
           variant="h4"
