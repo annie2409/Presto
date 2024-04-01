@@ -12,9 +12,15 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { navBarPages } from '../App';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuthContext } from '../context/AuthContext';
+import { useMutation } from 'react-query';
+import { logout } from '../apis/auth';
 
 const NavBar = () => {
+  const { user, updateUser } = useAuthContext();
+  const navigation = useNavigate();
+
   const [anchorNav, setAnchorNav] = useState(null);
 
   const openMenu = (e) => {
@@ -23,6 +29,21 @@ const NavBar = () => {
 
   const closeMenu = () => {
     setAnchorNav(null);
+  };
+
+  const { mutate, isLoading } = useMutation(logout, {
+    onSuccess: () => {
+      updateUser(null);
+      navigation('/login');
+    },
+    onError: (data) => {
+      alert(data.message);
+      // TODO: change this to show an error pop up
+    },
+  });
+
+  const handleLogout = () => {
+    mutate(user.token);
   };
 
   return (
@@ -43,11 +64,14 @@ const NavBar = () => {
               </Button>
             </Link>
           ))}
-          <Link to="/">
-            <Button color="inherit" sx={{ color: 'white' }}>
-              Logout
-            </Button>
-          </Link>
+          <Button
+            color="inherit"
+            sx={{ color: 'white' }}
+            disabled={isLoading}
+            onClick={handleLogout}
+          >
+            Logout
+          </Button>
         </Box>
         <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
           <IconButton
@@ -74,11 +98,14 @@ const NavBar = () => {
                 </MenuItem>
               ))}
               <MenuItem>
-                <Link to="/">
-                  <Button color="inherit" sx={{ color: 'navy' }}>
-                    Logout
-                  </Button>
-                </Link>
+                <Button
+                  disabled={isLoading}
+                  color="inherit"
+                  sx={{ color: 'navy' }}
+                  onClick={handleLogout}
+                >
+                  Logout
+                </Button>
               </MenuItem>
             </MenuList>
           </Menu>

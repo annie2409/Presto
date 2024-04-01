@@ -3,11 +3,14 @@ import { Box, Button, TextField, Typography } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from 'react-query';
 import { registerUser } from '../apis/auth.js';
-import { TOKEN } from '../utils/storage.js';
 import Alert from '@mui/material/Alert';
+import { LoggedInUser } from '../data/LoggedInUser.js';
+import { useAuthContext } from '../context/AuthContext.jsx';
 
 export const Register = () => {
   const navigation = useNavigate();
+
+  const { updateUser } = useAuthContext();
 
   const [inputs, setInputs] = useState({
     name: '',
@@ -26,7 +29,7 @@ export const Register = () => {
 
   const { mutate, isLoading } = useMutation(registerUser, {
     onSuccess: (data) => {
-      localStorage.setItem(TOKEN, data.token);
+      updateUser(new LoggedInUser(inputs.email, data.token));
       navigation('/home');
     },
     onError: (data) => {
@@ -71,6 +74,7 @@ export const Register = () => {
           <TextField
             variant="outlined"
             placeholder="Name"
+            required={true}
             name="name"
             value={inputs.name}
             onChange={handleInputChange}
@@ -80,6 +84,7 @@ export const Register = () => {
           <TextField
             variant="outlined"
             placeholder="Email"
+            required={true}
             name="email"
             value={inputs.email}
             onChange={handleInputChange}
@@ -90,6 +95,7 @@ export const Register = () => {
           <TextField
             variant="outlined"
             placeholder="Password"
+            required={true}
             name="password"
             value={inputs.password}
             onChange={handleInputChange}

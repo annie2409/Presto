@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { Alert, Box, Button, TextField, Typography } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../apis/auth';
-import { TOKEN } from '../utils/storage';
 import { useMutation } from 'react-query';
+import { useAuthContext } from '../context/AuthContext';
+import { LoggedInUser } from '../data/LoggedInUser';
 
 export const Login = () => {
   const navigation = useNavigate();
+  const { updateUser } = useAuthContext();
 
   const [inputs, setInputs] = useState({
     email: '',
@@ -24,7 +26,7 @@ export const Login = () => {
 
   const { mutate, isLoading } = useMutation(login, {
     onSuccess: (data) => {
-      localStorage.setItem(TOKEN, data.token);
+      updateUser(new LoggedInUser(inputs.email, data.token));
       navigation('/home');
     },
     onError: (data) => {
@@ -69,6 +71,7 @@ export const Login = () => {
           <TextField
             variant="outlined"
             placeholder="Email"
+            required={true}
             name="email"
             value={inputs.email}
             onChange={handleInputChange}
@@ -80,6 +83,7 @@ export const Login = () => {
             variant="outlined"
             placeholder="Password"
             name="password"
+            required={true}
             value={inputs.passwprd}
             onChange={handleInputChange}
             type="password"
