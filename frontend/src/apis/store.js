@@ -20,6 +20,7 @@ export const getStore = async () => {
 };
 
 export const updateStore = async (data) => {
+  console.log('updating data store with ', data);
   const response = await fetch(`${BACKEND_URL}/store`, {
     method: 'PUT',
     headers: {

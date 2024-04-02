@@ -10,6 +10,7 @@ import React, { useState, forwardRef } from 'react';
 import { updateStore } from '../apis/store';
 import { useUserDataContext } from '../context/UserDataContext';
 import { useMutation } from 'react-query';
+import { Presentation } from '../data/presentation';
 
 export const NewPresentationForm = forwardRef((props, ref) => {
   // Forward the ref
@@ -33,7 +34,8 @@ export const NewPresentationForm = forwardRef((props, ref) => {
   });
 
   const handleCreate = () => {
-    userData.presentations.push(name);
+    const presentation = new Presentation(name, description);
+    userData.presentations.push(presentation);
     mutate(userData.toJSON());
   };
 
@@ -82,7 +84,6 @@ export const NewPresentationForm = forwardRef((props, ref) => {
         margin="normal"
         sx={{ width: '100%' }}
         tabIndex={1}
-        autoFocus
       />
       <Box display="flex" justifyContent="flex-end">
         <Button

@@ -17,7 +17,6 @@ export const UserDataProvider = ({ children }) => {
   }, [data]);
 
   const updateUserData = (newValue) => {
-    console.log('setting user data ', newValue);
     setUserData(newValue);
   };
 
