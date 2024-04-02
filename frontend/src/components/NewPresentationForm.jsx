@@ -14,6 +14,7 @@ import { useMutation } from 'react-query';
 export const NewPresentationForm = forwardRef((props, ref) => {
   // Forward the ref
   const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const {
     userData,
@@ -72,13 +73,24 @@ export const NewPresentationForm = forwardRef((props, ref) => {
         tabIndex={0}
         autoFocus
       />
+      <TextField
+        variant="outlined"
+        placeholder="Description"
+        name="newPresentationDescription"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        margin="normal"
+        sx={{ width: '100%' }}
+        tabIndex={1}
+        autoFocus
+      />
       <Box display="flex" justifyContent="flex-end">
         <Button
           variant="contained"
           color="primary"
           disabled={isLoading}
           onClick={handleCreate}
-          tabIndex={1}
+          tabIndex={2}
         >
           Create
         </Button>

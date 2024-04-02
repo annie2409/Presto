@@ -17,9 +17,12 @@ import { useAuthContext } from '../context/AuthContext';
 import { useMutation } from 'react-query';
 import { logout } from '../apis/auth';
 import { loginPage } from '../utils/routes';
+import { UserData } from '../data/userData';
+import { useUserDataContext } from '../context/UserDataContext';
 
 const NavBar = () => {
   const { user, updateUser } = useAuthContext();
+  const { updateUserData } = useUserDataContext();
   const navigation = useNavigate();
 
   const [anchorNav, setAnchorNav] = useState(null);
@@ -35,6 +38,8 @@ const NavBar = () => {
   const { mutate, isLoading } = useMutation(logout, {
     onSuccess: () => {
       updateUser(null);
+      updateUserData(new UserData());
+      sessionStorage.clear();
       navigation(loginPage);
     },
     onError: (data) => {

@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../apis/auth';
 import { useMutation } from 'react-query';
 import { useAuthContext } from '../context/AuthContext';
-import { LoggedInUser } from '../data/LoggedInUser';
+import { LoggedInUser } from '../data/loggedInUser';
 import { dashboardPage } from '../utils/routes';
 
 export const Login = () => {

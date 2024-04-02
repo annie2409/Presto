@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useUserDataContext } from '../context/UserDataContext';
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, Grid } from '@mui/material';
+import { PresentationCard } from './PresentationCard';
 
 export const PresentationCardsList = () => {
   const { userData, isLoading } = useUserDataContext();
@@ -15,5 +16,13 @@ export const PresentationCardsList = () => {
     return <CircularProgress></CircularProgress>;
   }
 
-  return <div>There are {0} cards here</div>;
+  return (
+    <Grid container spacing={2}>
+      {userData.presentations.map((presentation, index) => (
+        <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+          <PresentationCard name={presentation}></PresentationCard>
+        </Grid>
+      ))}
+    </Grid>
+  );
 };

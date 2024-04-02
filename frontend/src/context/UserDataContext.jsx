@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { UserData } from '../utils/userData';
+import { UserData } from '../data/userData';
 import { useUserStore } from '../apis/store';
 
 const UserDataContext = React.createContext(new UserData());
@@ -11,12 +11,13 @@ export const UserDataProvider = ({ children }) => {
   const [userData, setUserData] = useState(new UserData());
 
   useEffect(() => {
-    if (!isLoading) {
+    if (data && !isLoading) {
       setUserData(UserData.fromData(data.store.store));
     }
-  }, [isLoading]);
+  }, [data]);
 
   const updateUserData = (newValue) => {
+    console.log('setting user data ', newValue);
     setUserData(newValue);
   };
 

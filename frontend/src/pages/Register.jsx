@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from 'react-query';
 import { registerUser } from '../apis/auth.js';
 import Alert from '@mui/material/Alert';
-import { LoggedInUser } from '../data/LoggedInUser.js';
+import { LoggedInUser } from '../data/loggedInUser.js';
 import { useAuthContext } from '../context/AuthContext.jsx';
 import { dashboardPage } from '../utils/routes.js';
 
