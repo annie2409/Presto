@@ -7,7 +7,8 @@ import { Dashboard } from './pages/Dashboard';
 import { ErrorBoundary } from 'react-error-boundary';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { AuthProvider } from './context/AuthContext';
-import { dashboardPage, loginPage, registerPage } from './utils/routes';
+import { dashboardPage, loginPage, presentationPage, registerPage } from './utils/routes';
+import { Presentation } from './pages/Presentation';
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const App = () => {
               <Route path={dashboardPage} element={<Dashboard />}/>
               <Route path={loginPage} element={<Login />} />
               <Route path={registerPage} element={<Register />} />
+              <Route path={presentationPage} element={<Presentation/>}/>
             </Routes>
           </BrowserRouter>
         </ErrorBoundary>
