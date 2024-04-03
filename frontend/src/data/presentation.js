@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 export class Presentation {
-  constructor (title, description) {
+  constructor (id, title, description) {
+    this.id = id
     this.title = title;
     this.description = description ?? '';
     this.slides = []
@@ -11,6 +12,6 @@ export class Presentation {
   }
 
   static fromData (data) {
-    return new Presentation(data.title, data.description)
+    return new Presentation(data.id, data.title, data.description)
   }
 }

@@ -34,7 +34,7 @@ export const NewPresentationForm = forwardRef((props, ref) => {
   });
 
   const handleCreate = () => {
-    const presentation = new Presentation(name, description);
+    const presentation = new Presentation(Date.now(), name, description);
     userData.presentations.push(presentation);
     mutate(userData.toJSON());
   };

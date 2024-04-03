@@ -4,7 +4,7 @@ import CardContent from '@mui/material/CardContent';
 import {
   Box,
   CardActions,
-  CardHeader,
+  // CardHeader,
   Tooltip,
   Typography,
   useMediaQuery,
@@ -14,15 +14,14 @@ import { useNavigate } from 'react-router-dom';
 import { editPresentationPageFor } from '../utils/routes';
 
 export const PresentationCard = ({ presentation }) => {
-  const isSmallScreen = useMediaQuery('(max-width:300px)');
+  const isSmallScreen = useMediaQuery('(max-width:290px)');
   const isTinyScreen = useMediaQuery('(max-width:230px)');
   const navigation = useNavigate();
-  console.log(isSmallScreen);
 
   return (
     <Card
       variant="outlined"
-      onClick={() => navigation(editPresentationPageFor(presentation.title))}
+      onClick={() => navigation(editPresentationPageFor(presentation.id))}
       sx={{
         display: 'flex',
         flexDirection: 'column',
@@ -37,29 +36,31 @@ export const PresentationCard = ({ presentation }) => {
             : 'todo',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
+        cursor: 'pointer',
       }}
     >
-      <Tooltip title={presentation.title}>
-        <CardHeader
-          title={presentation.title}
-          sx={{
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            display: '-webkit-box',
-            WebkitLineClamp: 1, // Number of lines before truncation
-            WebkitBoxOrient: 'vertical',
-            whiteSpace: 'nowrap',
-            zIndex: 1,
-          }}
-        ></CardHeader>
-      </Tooltip>
-
-      {!isSmallScreen && (
-        <CardContent
-          sx={{
-            marginTop: '-30px',
-          }}
-        >
+      <CardContent
+        sx={{
+          marginTop: '-10px',
+        }}
+      >
+        <Tooltip title={presentation.title}>
+          <Typography
+            variant="h5"
+            sx={{
+              maxHeight: '2em',
+              color: 'text.secondary',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              display: '-webkit-box',
+              WebkitLineClamp: 1, // Number of lines before truncation
+              WebkitBoxOrient: 'vertical',
+            }}
+          >
+            {presentation.title}
+          </Typography>
+        </Tooltip>
+        {!isSmallScreen && (
           <Typography
             variant="body2"
             sx={{
@@ -74,8 +75,9 @@ export const PresentationCard = ({ presentation }) => {
           >
             {presentation.description}
           </Typography>
-        </CardContent>
-      )}
+        )}
+      </CardContent>
+
       {!isTinyScreen && (
         <CardActions>
           <Box display={'flex'} alignItems={'center'} marginTop={'0.5em'}>

@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { AuthProvider } from './context/AuthContext';
 import { dashboardPage, loginPage, editPresentationPage, registerPage } from './utils/routes';
 import { EditPresentation } from './pages/EditPresentation';
+import { UserDataProvider } from './context/UserDataContext';
 
 const queryClient = new QueryClient();
 
@@ -30,10 +31,18 @@ const App = () => {
         <ErrorBoundary fallbackRender={fallbackRender}>
           <BrowserRouter>
             <Routes>
-              <Route path={dashboardPage} element={<Dashboard />}/>
               <Route path={loginPage} element={<Login />} />
               <Route path={registerPage} element={<Register />} />
-              <Route path={editPresentationPage} element={<EditPresentation/>}/>
+              <Route path={dashboardPage} element={
+                <UserDataProvider>
+                  <Dashboard />
+                  </UserDataProvider>
+              }/>
+              <Route path={editPresentationPage} element={
+                <UserDataProvider>
+                  <EditPresentation/>
+                </UserDataProvider>
+              }/>
             </Routes>
           </BrowserRouter>
         </ErrorBoundary>
