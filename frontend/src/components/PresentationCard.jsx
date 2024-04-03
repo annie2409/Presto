@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import SlideshowIcon from '@mui/icons-material/Slideshow';
 import { useNavigate } from 'react-router-dom';
-import { presentationPageFor } from '../utils/routes';
+import { editPresentationPageFor } from '../utils/routes';
 
 export const PresentationCard = ({ presentation }) => {
   const isSmallScreen = useMediaQuery('(max-width:300px)');
@@ -22,7 +22,7 @@ export const PresentationCard = ({ presentation }) => {
   return (
     <Card
       variant="outlined"
-      onClick={() => navigation(presentationPageFor(presentation.title))}
+      onClick={() => navigation(editPresentationPageFor(presentation.title))}
       sx={{
         display: 'flex',
         flexDirection: 'column',
