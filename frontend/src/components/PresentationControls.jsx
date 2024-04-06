@@ -23,7 +23,6 @@ import { useUserDataContext } from '../context/UserDataContext';
 import { NoteAdd } from '@mui/icons-material';
 
 export const PresentationControls = (props) => {
-  // const classes = useStyles();
   const navigation = useNavigate();
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -49,6 +48,16 @@ export const PresentationControls = (props) => {
       setDeleteErrorMessage(data.message);
     },
   });
+
+  const { mutate: inserNewSlide, isLoading: inserNewSlideLoading } =
+    useMutation(updateStore, {
+      onSuccess: (data) => {
+        console.log(data);
+      },
+      onError: (data) => {
+        console.error(data.message);
+      },
+    });
 
   const handleDeletePresentation = () => {
     const toDeleteIndex = userData.presentations.findIndex(
@@ -92,6 +101,15 @@ export const PresentationControls = (props) => {
     setEditTitleErrorMessage('');
   };
 
+  const handleCreateNewSlide = () => {
+    const toUpdatePresentation = userData.presentations.find(
+      (item) => item.id === parseInt(props.presentation.id),
+    );
+    toUpdatePresentation.slides.push({});
+    inserNewSlide(userData.toJSON());
+    updateUserData(userData);
+  };
+
   return (
     <>
       <Container>
@@ -131,6 +149,7 @@ export const PresentationControls = (props) => {
                 <Button
                   variant="contained"
                   color="warning"
+                  disabled={inserNewSlideLoading}
                   onClick={() => setShowDeleteModal(true)}
                 >
                   <DeleteIcon />
@@ -142,7 +161,7 @@ export const PresentationControls = (props) => {
                 <Button
                   variant="contained"
                   color="warning"
-                  onClick={() => setShowDeleteModal(true)}
+                  onClick={() => handleCreateNewSlide()}
                 >
                   <NoteAdd />
                 </Button>

@@ -32,12 +32,10 @@ export const Dashboard = () => {
   if (!isLoggedIn) {
     return (
       <Box
-        style={{
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-        }}
+        position={'fixed'}
+        top={'50%'}
+        left={'50%'}
+        transform={'translate(-50%, -50%)'}
       >
         <CircularProgress />
       </Box>

@@ -1,4 +1,4 @@
-import { Alert, CircularProgress, Snackbar } from '@mui/material';
+import { Alert, CircularProgress, Snackbar, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import NavBar from '../components/NavBar';
@@ -8,18 +8,27 @@ import { PresentationControls } from '../components/PresentationControls';
 import 'split-pane-react/esm/themes/default.css';
 import { useUserStorePolling } from '../apis/store';
 import { UserData } from '../data/userData';
+import { Slide } from '../components/Slide';
+import styled from 'styled-components';
+
+const SlideContainer = styled.div`
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #d5d7d9;
+`;
+
+const SplitPaneContainer = styled.div`
+  height: 100vh;
+  width: 100wh;
+`;
 
 export const EditPresentation = () => {
   const { presentationId } = useParams();
 
-  const layoutCSS = {
-    height: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  };
-
   const [sizes, setSizes] = useState([150, '30%', 'auto']);
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(1);
 
   const { data, isLoading, error } = useUserStorePolling();
 
@@ -51,15 +60,25 @@ export const EditPresentation = () => {
   return (
     <div>
       <NavBar />
-      <div style={{ height: '100vh', width: '100wh' }}>
+      <SplitPaneContainer>
         <SplitPane split="vertical" sizes={sizes} onChange={setSizes}>
           <Pane minSize={250} maxSize="37%">
-            {/* <div style={{ background: '#ddd' }}>pane1</div> */}
             <PresentationControls presentation={getPresentation()} />
           </Pane>
-          <div style={{ ...layoutCSS, background: '#d5d7d9' }}>pane2</div>
+          <SlideContainer>
+            {getPresentation().slides && (
+              <Slide
+                slideNumber={currentSlideIndex}
+                slideData={getPresentation().slides[currentSlideIndex]}
+              ></Slide>
+            )}
+
+            {!getPresentation().slides && (
+              <Typography variant="subtitle2">No slides yet</Typography>
+            )}
+          </SlideContainer>
         </SplitPane>
-      </div>
+      </SplitPaneContainer>
     </div>
   );
 };

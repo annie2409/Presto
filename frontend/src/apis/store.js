@@ -51,7 +51,7 @@ export const useUserStore = () => {
 
 export const useUserStorePolling = () =>
   useQuery('useUserStorePolling', () => getStore(), {
-    refetchInterval: 5000,
+    refetchInterval: 1000,
     initialData: () => undefined,
   });
 
