@@ -36,7 +36,7 @@ const App = () => {
               <Route path={dashboardPage} element={
                 <UserDataProvider>
                   <Dashboard />
-                  </UserDataProvider>
+                </UserDataProvider>
               }/>
               <Route path={editPresentationPage} element={
                 <UserDataProvider>

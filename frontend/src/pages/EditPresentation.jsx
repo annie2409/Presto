@@ -1,139 +1,65 @@
-import {
-  Alert,
-  Box,
-  Button,
-  CircularProgress,
-  Modal,
-  Typography,
-} from '@mui/material';
+import { Alert, CircularProgress, Snackbar } from '@mui/material';
 import React, { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { dashboardPage } from '../utils/routes';
+import { useParams } from 'react-router-dom';
 import NavBar from '../components/NavBar';
-import { useMutation } from 'react-query';
-import { updateStore } from '../apis/store';
-import { useUserDataContext } from '../context/UserDataContext';
+import SplitPane from 'split-pane-react/esm/SplitPane';
+import { Pane } from 'split-pane-react';
+import { PresentationControls } from '../components/PresentationControls';
+import 'split-pane-react/esm/themes/default.css';
+import { useUserStorePolling } from '../apis/store';
+import { UserData } from '../data/userData';
 
 export const EditPresentation = () => {
-  const navigation = useNavigate();
   const { presentationId } = useParams();
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [deleteErrorMessage, setDeleteErrorMessage] = useState('');
 
-  const {
-    userData,
-    isLoading: userDataIsLoading,
-    updateUserData,
-  } = useUserDataContext();
+  const layoutCSS = {
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  };
 
-  const { mutate, isLoading } = useMutation(updateStore, {
-    onSuccess: () => {
-      updateUserData(userData);
-      navigation(dashboardPage);
-    },
-    onError: (data) => {
-      setDeleteErrorMessage(data.message);
-    },
-  });
+  const [sizes, setSizes] = useState([150, '30%', 'auto']);
 
-  const handleDeletePresentation = () => {
-    console.log(userData);
-    const toDeleteIndex = userData.presentations.findIndex(
+  const { data, isLoading, error } = useUserStorePolling();
+
+  console.log(data, isLoading, error);
+  if (isLoading) {
+    return <CircularProgress />;
+  } else if (error) {
+    return (
+      <Snackbar
+        autoHideDuration={6000}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert severity="error" sx={{ width: '90%' }}>
+          {error}
+        </Alert>
+      </Snackbar>
+    );
+  }
+
+  const userData = UserData.fromData(data.store.store);
+
+  const getPresentation = () => {
+    console.log(presentationId, userData.presentations);
+    return userData.presentations.find(
       (item) => item.id === parseInt(presentationId),
     );
-
-    if (toDeleteIndex !== -1) {
-      userData.presentations.splice(toDeleteIndex, 1);
-      mutate(userData.toJSON());
-    } else {
-      setDeleteErrorMessage(
-        'The presentation you tried to delete cannot be found.',
-      );
-    }
   };
-
-  const closeDeleteModal = () => {
-    setShowDeleteModal(false);
-    setDeleteErrorMessage('');
-  };
-
-  if (userDataIsLoading) {
-    return <CircularProgress />;
-  }
 
   return (
     <div>
       <NavBar />
-      Presentaiton Page for {presentationId}
-      <Button
-        variant="contained"
-        color="error"
-        onClick={() => navigation(dashboardPage)}
-      >
-        Back
-      </Button>
-      <Button
-        variant="contained"
-        color="error"
-        onClick={() => setShowDeleteModal(true)}
-      >
-        Delete
-      </Button>
-      <Modal
-        open={showDeleteModal}
-        onClose={closeDeleteModal}
-        aria-labelledby="delete-presentation"
-      >
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            minWidth: 300,
-            width: '40%',
-            bgcolor: 'background.paper',
-            border: '2px solid #000',
-            boxShadow: 24,
-            p: 4,
-          }}
-        >
-          <Typography
-            id="modal-modal-title"
-            variant="h6"
-            component="h2"
-            textAlign={'center'}
-          >
-            Are you sure?
-          </Typography>
-          {deleteErrorMessage !== '' && (
-            <Alert severity="error">{deleteErrorMessage}</Alert>
-          )}
-          <Box display={'flex'} justifyContent={'center'}>
-            <Button
-              variant="contained"
-              color="error"
-              disabled={isLoading}
-              onClick={() => handleDeletePresentation()}
-              sx={{
-                marginRight: '0.5em',
-              }}
-            >
-              Yes
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{
-                marginLeft: '0.5em',
-              }}
-              onClick={closeDeleteModal}
-            >
-              No
-            </Button>
-          </Box>
-        </Box>
-      </Modal>
+      <div style={{ height: '100vh', width: '100wh' }}>
+        <SplitPane split="vertical" sizes={sizes} onChange={setSizes}>
+          <Pane minSize={250} maxSize="37%">
+            {/* <div style={{ background: '#ddd' }}>pane1</div> */}
+            <PresentationControls presentation={getPresentation()} />
+          </Pane>
+          <div style={{ ...layoutCSS, background: '#d5d7d9' }}>pane2</div>
+        </SplitPane>
+      </div>
     </div>
   );
 };

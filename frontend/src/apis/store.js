@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { useQuery } from 'react-query';
 import { BACKEND_URL } from './urls.js';
 import { LOGGED_IN_USER } from '../utils/constants.js';
@@ -16,8 +17,8 @@ export const getStore = async () => {
       throw new Error(message.error);
     });
   }
-  return response.json();
-};
+  return (await response.json());
+}
 
 export const updateStore = async (data) => {
   console.log('updating data store with ', data);
@@ -37,22 +38,22 @@ export const updateStore = async (data) => {
       throw new Error(message.error);
     });
   }
-  return response.json();
+  return await response.json();
 };
 
 export const useUserStore = () => {
-  const { data, isLoading, error } = useQuery('useUserStore', getStore);
+  const { data, isLoading, error } = useQuery(['useUserStore'], getStore, {
+    initialData: () => undefined,
+  });
   console.log(data);
   return { data, isLoading, error };
 };
 
-export const useUserStorePolling = () => {
-  const { data, isLoading, error } = useQuery('useUserStore', getStore, {
+export const useUserStorePolling = () =>
+  useQuery('useUserStorePolling', () => getStore(), {
     refetchInterval: 5000,
+    initialData: () => undefined,
   });
-
-  return { data, isLoading, error };
-};
 
 const getTokenFromSessionStorage = () => {
   console.log(
