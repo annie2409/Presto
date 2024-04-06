@@ -3,9 +3,10 @@ import {
   CircularProgress,
   IconButton,
   Snackbar,
+  Tooltip,
   Typography,
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import SplitPane from 'split-pane-react/esm/SplitPane';
@@ -49,7 +50,6 @@ export const EditPresentation = () => {
 
   const { data, isLoading, error } = useUserStorePolling();
 
-  console.log(data, isLoading, error);
   if (isLoading) {
     return <CircularProgress />;
   } else if (error) {
@@ -68,12 +68,49 @@ export const EditPresentation = () => {
   const userData = UserData.fromData(data.store.store);
 
   const getPresentation = () => {
-    console.log(presentationId, userData.presentations);
     return userData.presentations.find(
       (item) => item.id === parseInt(presentationId),
     );
   };
 
+  const showLeftArrow =
+    getPresentation().slides &&
+    getPresentation().slides.length >= 2 &&
+    currentSlideIndex !== 1;
+
+  const showRightArrow =
+    getPresentation().slides &&
+    getPresentation().slides.length >= 2 &&
+    currentSlideIndex !== getPresentation().slides.length;
+
+  const hasSlides =
+    getPresentation().slides && getPresentation().slides.length !== 0;
+
+  const handleNextSlideAction = () => {
+    setCurrentSlideIndex(currentSlideIndex + 1);
+  };
+
+  const handlePreviousSlideAction = () => {
+    setCurrentSlideIndex(currentSlideIndex - 1);
+  };
+
+  const handleKeyPress = (event) => {
+    if (event.key === 'ArrowRight') {
+      handleNextSlideAction();
+    } else if (event.key === 'ArrowLeft') {
+      handlePreviousSlideAction();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyPress);
+    // Remove event listener when component unmounts
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [currentSlideIndex]);
+
+  console.log(getPresentation());
   return (
     <div>
       <NavBar />
@@ -83,26 +120,34 @@ export const EditPresentation = () => {
             <PresentationControls presentation={getPresentation()} />
           </Pane>
           <SlideContainer>
-            {getPresentation().slides && (
+            {hasSlides && (
               <Slide
                 slideNumber={currentSlideIndex}
                 slideData={getPresentation().slides[currentSlideIndex]}
               ></Slide>
             )}
 
-            {!getPresentation().slides && (
+            {!hasSlides && (
               <Typography variant="subtitle2">No slides yet</Typography>
             )}
           </SlideContainer>
         </SplitPane>
       </SplitPaneContainer>
       <BottomRightButtonsContainer>
-        <IconButton>
-          <KeyboardArrowLeftRounded />
-        </IconButton>
-        <IconButton>
-          <KeyboardArrowRightRounded />
-        </IconButton>
+        {showLeftArrow && (
+          <Tooltip title="Previous slide">
+            <IconButton onClick={handlePreviousSlideAction}>
+              <KeyboardArrowLeftRounded />
+            </IconButton>
+          </Tooltip>
+        )}
+        {showRightArrow && (
+          <Tooltip title="Next slide">
+            <IconButton onClick={handleNextSlideAction}>
+              <KeyboardArrowRightRounded />
+            </IconButton>
+          </Tooltip>
+        )}
       </BottomRightButtonsContainer>
     </div>
   );

@@ -149,7 +149,6 @@ export const PresentationControls = (props) => {
                 <Button
                   variant="contained"
                   color="warning"
-                  disabled={inserNewSlideLoading}
                   onClick={() => setShowDeleteModal(true)}
                 >
                   <DeleteIcon />
@@ -160,6 +159,7 @@ export const PresentationControls = (props) => {
               <Tooltip title="Add new slide">
                 <Button
                   variant="contained"
+                  disabled={inserNewSlideLoading}
                   color="warning"
                   onClick={() => handleCreateNewSlide()}
                 >
