@@ -1,4 +1,10 @@
-import { Alert, CircularProgress, Snackbar, Typography } from '@mui/material';
+import {
+  Alert,
+  CircularProgress,
+  IconButton,
+  Snackbar,
+  Typography,
+} from '@mui/material';
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import NavBar from '../components/NavBar';
@@ -10,6 +16,10 @@ import { useUserStorePolling } from '../apis/store';
 import { UserData } from '../data/userData';
 import { Slide } from '../components/Slide';
 import styled from 'styled-components';
+import {
+  KeyboardArrowLeftRounded,
+  KeyboardArrowRightRounded,
+} from '@mui/icons-material';
 
 const SlideContainer = styled.div`
   height: 100%;
@@ -22,6 +32,13 @@ const SlideContainer = styled.div`
 const SplitPaneContainer = styled.div`
   height: 100vh;
   width: 100wh;
+`;
+
+const BottomRightButtonsContainer = styled.div`
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000; /* Ensure buttons are on top of other content */
 `;
 
 export const EditPresentation = () => {
@@ -79,6 +96,14 @@ export const EditPresentation = () => {
           </SlideContainer>
         </SplitPane>
       </SplitPaneContainer>
+      <BottomRightButtonsContainer>
+        <IconButton>
+          <KeyboardArrowLeftRounded />
+        </IconButton>
+        <IconButton>
+          <KeyboardArrowRightRounded />
+        </IconButton>
+      </BottomRightButtonsContainer>
     </div>
   );
 };
