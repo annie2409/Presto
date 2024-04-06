@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   CircularProgress,
+  Container,
   Modal,
   Typography,
 } from '@mui/material';
@@ -47,25 +48,27 @@ export const Dashboard = () => {
     <UserDataProvider>
       <NavBar />
       <div>
-        <Typography variant="h3">Dashboard</Typography>
-        <Typography variant="subtitle1">{`Welcome ${user.email}`}</Typography>
-        <Button
-          variant="contained"
-          color="warning"
-          onClick={() => setIsNewPresentationModalOpen(true)}
-        >
-          New presentation
-        </Button>
-        <Modal
-          open={isNewPresentationModalOpen}
-          onClose={() => setIsNewPresentationModalOpen(false)}
-          aria-labelledby="modal-new-presentation-title"
-        >
-          <NewPresentationForm
-            onSubmit={() => setIsNewPresentationModalOpen(false)}
-          />
-        </Modal>
-        <PresentationCardsList />
+        <Container>
+          <Typography variant="h3">Dashboard</Typography>
+          <Typography variant="subtitle1">{`Welcome ${user.email}`}</Typography>
+          <Button
+            variant="contained"
+            color="warning"
+            onClick={() => setIsNewPresentationModalOpen(true)}
+          >
+            New presentation
+          </Button>
+          <Modal
+            open={isNewPresentationModalOpen}
+            onClose={() => setIsNewPresentationModalOpen(false)}
+            aria-labelledby="modal-new-presentation-title"
+          >
+            <NewPresentationForm
+              onSubmit={() => setIsNewPresentationModalOpen(false)}
+            />
+          </Modal>
+          <PresentationCardsList />
+        </Container>
       </div>
     </UserDataProvider>
   );
