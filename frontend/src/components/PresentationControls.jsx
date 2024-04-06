@@ -20,6 +20,7 @@ import { dashboardPage } from '../utils/routes';
 import { useMutation } from 'react-query';
 import { updateStore } from '../apis/store';
 import { useUserDataContext } from '../context/UserDataContext';
+import { NoteAdd } from '@mui/icons-material';
 
 export const PresentationControls = (props) => {
   // const classes = useStyles();
@@ -133,6 +134,17 @@ export const PresentationControls = (props) => {
                   onClick={() => setShowDeleteModal(true)}
                 >
                   <DeleteIcon />
+                </Button>
+              </Tooltip>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <Tooltip title="Add new slide">
+                <Button
+                  variant="contained"
+                  color="warning"
+                  onClick={() => setShowDeleteModal(true)}
+                >
+                  <NoteAdd />
                 </Button>
               </Tooltip>
             </Grid>
