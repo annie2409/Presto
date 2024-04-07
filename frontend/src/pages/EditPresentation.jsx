@@ -71,7 +71,12 @@ export const EditPresentation = () => {
     setCurrentSlideIndex(getPresentation().slides.length);
   }
 
-  if (getPresentation() && getPresentation().slides && currentSlideIndex <= 0) {
+  if (
+    getPresentation() &&
+    getPresentation().slides &&
+    getPresentation().slides.length >= 1 &&
+    currentSlideIndex <= 0
+  ) {
     setCurrentSlideIndex(1);
   }
 

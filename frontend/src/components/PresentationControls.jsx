@@ -28,6 +28,11 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteErrorMessage, setDeleteErrorMessage] = useState('');
 
+  const [
+    showDeletePresentationInsteadModal,
+    setShowDeletePresentationInsteadModal,
+  ] = useState(false);
+
   const [showEditTitleModal, setShowEditTitleModal] = useState(false);
   const [editTitleErrorMessage, setEditTitleErrorMessage] = useState('');
   const [editPresentationTitle, setEditPresentationTitle] = useState('');
@@ -79,7 +84,6 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
     const toUpdatePresentation = userData.presentations.find(
       (item) => item.id === parseInt(presentation.id),
     );
-    console.log(toUpdatePresentation);
 
     if (toUpdatePresentation) {
       toUpdatePresentation.title = editPresentationTitle;
@@ -93,6 +97,11 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
 
   const closeDeleteModal = () => {
     setShowDeleteModal(false);
+    setDeleteErrorMessage('');
+  };
+
+  const closeDeletePresentationInsteadModal = () => {
+    setShowDeletePresentationInsteadModal(false);
     setDeleteErrorMessage('');
   };
 
@@ -115,9 +124,13 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
     const target = userData.presentations.find(
       (item) => item.id === parseInt(presentation.id),
     );
-    target.slides.splice(currentSlideIndex - 1, 1);
-    mutateWithoutFollowupAction(userData.toJSON());
-    updateUserData(userData);
+    if (target.slides.length === 1) {
+      setShowDeletePresentationInsteadModal(true);
+    } else {
+      target.slides.splice(currentSlideIndex - 1, 1);
+      mutateWithoutFollowupAction(userData.toJSON());
+      updateUserData(userData);
+    }
   };
 
   return (
@@ -304,6 +317,61 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
               onClick={closeEditTitleodal}
             >
               Cancel
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
+      <Modal
+        open={showDeletePresentationInsteadModal}
+        onClose={closeDeletePresentationInsteadModal}
+        aria-labelledby="delete-presentation"
+      >
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            minWidth: 300,
+            width: '40%',
+            bgcolor: 'background.paper',
+            border: '2px solid #000',
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <Typography
+            id="modal-modal-title"
+            variant="h6"
+            component="h2"
+            textAlign={'center'}
+          >
+            Do you want to delete presentation instead?
+          </Typography>
+          {deleteErrorMessage !== '' && (
+            <Alert severity="error">{deleteErrorMessage}</Alert>
+          )}
+          <Box display={'flex'} justifyContent={'center'}>
+            <Button
+              variant="contained"
+              color="error"
+              disabled={isLoading}
+              onClick={() => handleDeletePresentation()}
+              sx={{
+                marginRight: '0.5em',
+              }}
+            >
+              Yes
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{
+                marginLeft: '0.5em',
+              }}
+              onClick={closeDeletePresentationInsteadModal}
+            >
+              No
             </Button>
           </Box>
         </Box>
