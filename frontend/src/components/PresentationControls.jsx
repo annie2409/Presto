@@ -159,6 +159,7 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
     let newElement = {
       x: 0,
       y: 0,
+      layer: 1000,
     };
     if (modalElementToCreate === SLIDE_ELEMENT_TEXT) {
       newElement = {

@@ -21,8 +21,20 @@ export const Slide = ({ slideNumber, slideData }) => {
       <PaperContainer>
         {slideData.elements.map((ele, index) => {
           return (
-            <Box key={index} maxWidth={ele.width} maxHeight={ele.height}>
-              <Typography fontSize={ele.fontSize} color={ele.fontColor}>
+            <Box
+              key={index}
+              maxWidth={`${ele.width}%`}
+              maxHeight={`${ele.height}%`}
+              overflow={'hidden'}
+              textOverflow={'clip'}
+            >
+              <Typography
+                fontSize={ele.fontSize}
+                color={ele.fontColor}
+                textOverflow={'clip'}
+                maxWidth={ele.width}
+                maxHeight={ele.height}
+              >
                 {ele.text}
               </Typography>
             </Box>

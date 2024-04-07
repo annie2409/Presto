@@ -40,7 +40,7 @@ export class Presentation {
       id: this.id,
       title: this.title,
       description: this.description,
-      slides: this.slides.map(slide => slide.toJSON)
+      slides: this.slides.map(slide => slide.toJSON())
     }
   }
 
