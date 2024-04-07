@@ -11,6 +11,7 @@ import {
   TextField,
   Grid,
   Tooltip,
+  FormControlLabel,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { useNavigate } from 'react-router-dom';
@@ -20,8 +21,19 @@ import { dashboardPage } from '../utils/routes';
 import { useMutation } from 'react-query';
 import { updateStore } from '../apis/store';
 import { useUserDataContext } from '../context/UserDataContext';
-import { Backspace, Image, NoteAdd, TextFields } from '@mui/icons-material';
-import { SLIDE_ELEMENT_IMAGE, SLIDE_ELEMENT_TEXT } from '../utils/constants';
+import {
+  Backspace,
+  Image,
+  Movie,
+  NoteAdd,
+  TextFields,
+} from '@mui/icons-material';
+import Checkbox from '@mui/material/Checkbox';
+import {
+  SLIDE_ELEMENT_IMAGE,
+  SLIDE_ELEMENT_TEXT,
+  SLIDE_ELEMENT_VIDEO,
+} from '../utils/constants';
 
 export const PresentationControls = ({ currentSlideIndex, presentation }) => {
   const navigation = useNavigate();
@@ -43,17 +55,23 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
     useState('');
   const [modalElementToCreate, setModalElementToCreate] = useState(null);
 
-  const [newTextElementWidth, setNewTextElementWidth] = useState(null);
-  const [newTextElementHeight, setNewTextElementHeight] = useState(null);
+  const [newTextElementWidth, setNewTextElementWidth] = useState('');
+  const [newTextElementHeight, setNewTextElementHeight] = useState('');
   const [newTextElementText, setNewTextElementText] = useState('');
-  const [newTextElementFontSize, setNewTextElementFontSize] = useState(null);
-  const [newTextElementColor, setNewTextElementFontColor] = useState(null);
+  const [newTextElementFontSize, setNewTextElementFontSize] = useState('');
+  const [newTextElementColor, setNewTextElementFontColor] = useState('');
 
-  const [newImageElementWidth, setNewImageElementWidth] = useState(null);
-  const [newImageElementHeight, setNewImageElementHeight] = useState(null);
+  const [newImageElementWidth, setNewImageElementWidth] = useState('');
+  const [newImageElementHeight, setNewImageElementHeight] = useState('');
   const [newImageElementSrc, setNewImageElementSrc] = useState('');
   const [newImageElementDescription, setNewImageElementDescription] =
     useState('');
+
+  const [newVideoElementWidth, setNewVideoElementWidth] = useState('');
+  const [newVideoElementHeight, setNewVideoElementHeight] = useState('');
+  const [newVideoElementSrc, setNewVideoElementSrc] = useState('');
+  const [newVideoElementShouldAutoPlay, setNewVideoElementShouldAutoPlay] =
+    useState(false);
 
   const { userData, updateUserData } = useUserDataContext();
 
@@ -158,10 +176,12 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
         return 'Create new TEXT';
       case SLIDE_ELEMENT_IMAGE:
         return 'Create new IMAGE';
+      case SLIDE_ELEMENT_VIDEO:
+        return 'Create new VIDEO';
     }
     return 'Unkonwn';
   };
-
+  console.log(newVideoElementShouldAutoPlay);
   const handleCreateNewElement = (e) => {
     e.preventDefault();
     let newElement = {
@@ -186,6 +206,15 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
         height: newImageElementHeight,
         src: newImageElementSrc,
         description: newImageElementDescription,
+      };
+    } else if (modalElementToCreate === SLIDE_ELEMENT_VIDEO) {
+      newElement = {
+        ...newElement,
+        type: SLIDE_ELEMENT_VIDEO,
+        width: newVideoElementWidth,
+        height: newVideoElementHeight,
+        src: newVideoElementSrc,
+        shouldAutoPlay: newVideoElementShouldAutoPlay,
       };
     }
     userData
@@ -297,6 +326,18 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
                   onClick={() => createNewElement(SLIDE_ELEMENT_IMAGE)}
                 >
                   <Image />
+                </Button>
+              </Tooltip>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <Tooltip title="Add video on to the slide">
+                <Button
+                  variant="contained"
+                  disabled={mutateWithoutFollowupActionLoading}
+                  color="warning"
+                  onClick={() => createNewElement(SLIDE_ELEMENT_VIDEO)}
+                >
+                  <Movie />
                 </Button>
               </Tooltip>
             </Grid>
@@ -747,6 +788,119 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
                       }
                       margin="normal"
                       tabIndex={3}
+                    />
+                  </Box>
+                </Grid>
+              </Grid>
+            )}
+
+            {modalElementToCreate === SLIDE_ELEMENT_VIDEO && (
+              <Grid
+                container
+                spacing={2}
+                justifyContent={'center'}
+                direction={'row'}
+                alignItems={'center'}
+                columns={16}
+              >
+                <Grid item xs={16} sm={8}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Width:</Typography>
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      placeholder="Width (%)"
+                      type="number"
+                      required={true}
+                      inputProps={{
+                        min: 0,
+                        max: 100,
+                      }}
+                      name="videoWidth"
+                      value={newVideoElementWidth}
+                      onChange={(e) => setNewVideoElementWidth(e.target.value)}
+                      margin="normal"
+                      tabIndex={0}
+                      autoFocus
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={16} sm={8}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Height:</Typography>
+                    <TextField
+                      variant="outlined"
+                      fullWidth
+                      placeholder="Height (%)"
+                      required={true}
+                      type="number"
+                      inputProps={{
+                        min: 0,
+                        max: 100,
+                      }}
+                      name="videoHeight"
+                      value={newVideoElementHeight}
+                      onChange={(e) => setNewVideoElementHeight(e.target.value)}
+                      margin="normal"
+                      tabIndex={1}
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={16}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Youtube source:</Typography>
+                    <TextField
+                      variant="outlined"
+                      fullWidth
+                      placeholder="Youtube URL"
+                      required={true}
+                      name="videoSrc"
+                      value={newVideoElementSrc}
+                      onChange={(e) => setNewVideoElementSrc(e.target.value)}
+                      margin="normal"
+                      tabIndex={2}
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={16}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Should autoplay:</Typography>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          label="Indicate whether the video will auto play or not"
+                          tabIndex={3}
+                          margin="normal"
+                          checked={newVideoElementShouldAutoPlay}
+                          onChange={(e) =>
+                            setNewVideoElementShouldAutoPlay(e.target.checked)
+                          }
+                        />
+                      }
                     />
                   </Box>
                 </Grid>

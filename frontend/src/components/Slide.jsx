@@ -13,7 +13,11 @@ import styled from 'styled-components';
 import { updateStore } from '../apis/store';
 import { useMutation } from 'react-query';
 import { useUserDataContext } from '../context/UserDataContext';
-import { SLIDE_ELEMENT_IMAGE, SLIDE_ELEMENT_TEXT } from '../utils/constants';
+import {
+  SLIDE_ELEMENT_IMAGE,
+  SLIDE_ELEMENT_TEXT,
+  SLIDE_ELEMENT_VIDEO,
+} from '../utils/constants';
 
 const PaperContainer = styled.div`
   position: relative;
@@ -170,6 +174,25 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
                     width={'100%'}
                     height={'100%'}
                   />
+                </Box>
+              );
+            } else if (ele.type === SLIDE_ELEMENT_VIDEO) {
+              return (
+                <Box
+                  key={index}
+                  position={'absolute'}
+                  top={`${parseInt(ele.x)}%`}
+                  left={`${parseInt(ele.y)}%`}
+                  width={`${ele.width}%`}
+                  height={`${ele.height}%`}
+                  zIndex={index}
+                >
+                  <iframe
+                    width={'100%'}
+                    height={'100%'}
+                    src={ele.src}
+                    allowfullscreen
+                  ></iframe>
                 </Box>
               );
             } else {
