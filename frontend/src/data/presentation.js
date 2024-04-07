@@ -26,7 +26,7 @@ export class Presentation {
   }
 
   getThumbnail () {
-    return this.slides.length === 0 ? null : 'COMING SOON'
+    return this.slides.length === 0 ? null : 'COMING SOON' // TODO: Generate thumbnail here
   }
 
   toString () {

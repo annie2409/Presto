@@ -20,8 +20,8 @@ import { dashboardPage } from '../utils/routes';
 import { useMutation } from 'react-query';
 import { updateStore } from '../apis/store';
 import { useUserDataContext } from '../context/UserDataContext';
-import { Backspace, NoteAdd, TextFields } from '@mui/icons-material';
-import { SLIDE_ELEMENT_TEXT } from '../utils/constants';
+import { Backspace, Image, NoteAdd, TextFields } from '@mui/icons-material';
+import { SLIDE_ELEMENT_IMAGE, SLIDE_ELEMENT_TEXT } from '../utils/constants';
 
 export const PresentationControls = ({ currentSlideIndex, presentation }) => {
   const navigation = useNavigate();
@@ -48,6 +48,12 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
   const [newTextElementText, setNewTextElementText] = useState('');
   const [newTextElementFontSize, setNewTextElementFontSize] = useState(null);
   const [newTextElementColor, setNewTextElementFontColor] = useState(null);
+
+  const [newImageElementWidth, setNewImageElementWidth] = useState(null);
+  const [newImageElementHeight, setNewImageElementHeight] = useState(null);
+  const [newImageElementSrc, setNewImageElementSrc] = useState('');
+  const [newImageElementDescription, setNewImageElementDescription] =
+    useState('');
 
   const { userData, updateUserData } = useUserDataContext();
 
@@ -150,6 +156,8 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
     switch (modalElementToCreate) {
       case SLIDE_ELEMENT_TEXT:
         return 'Create new TEXT';
+      case SLIDE_ELEMENT_IMAGE:
+        return 'Create new IMAGE';
     }
     return 'Unkonwn';
   };
@@ -170,19 +178,31 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
         fontSize: newTextElementFontSize,
         fontColor: newTextElementColor,
       };
-      userData
-        .getPresentationById(presentation.id)
-        .getSlideByIndex(currentSlideIndex - 1)
-        .addElement(newElement);
-      console.log(userData);
-      mutateWithoutFollowupAction(userData.toJSON());
-      updateUserData(userData);
-      setNewTextElementFontColor(null);
-      setNewTextElementFontSize(null);
-      setNewTextElementHeight(null);
-      setNewTextElementWidth(null);
-      setNewTextElementText('');
+    } else if (modalElementToCreate === SLIDE_ELEMENT_IMAGE) {
+      newElement = {
+        ...newElement,
+        type: SLIDE_ELEMENT_IMAGE,
+        width: newImageElementWidth,
+        height: newImageElementHeight,
+        src: newImageElementSrc,
+        description: newImageElementDescription,
+      };
     }
+    userData
+      .getPresentationById(presentation.id)
+      .getSlideByIndex(currentSlideIndex - 1)
+      .addElement(newElement);
+    mutateWithoutFollowupAction(userData.toJSON());
+    updateUserData(userData);
+    setNewTextElementFontColor(null);
+    setNewTextElementFontSize(null);
+    setNewTextElementHeight(null);
+    setNewTextElementWidth(null);
+    setNewTextElementText('');
+    setNewImageElementWidth(null);
+    setNewImageElementHeight(null);
+    setNewImageElementDescription('');
+    setNewImageElementSrc('');
     closeNewElementModal();
   };
 
@@ -265,6 +285,18 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
                   onClick={() => createNewElement(SLIDE_ELEMENT_TEXT)}
                 >
                   <TextFields />
+                </Button>
+              </Tooltip>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <Tooltip title="Add image on to the slide">
+                <Button
+                  variant="contained"
+                  disabled={mutateWithoutFollowupActionLoading}
+                  color="warning"
+                  onClick={() => createNewElement(SLIDE_ELEMENT_IMAGE)}
+                >
+                  <Image />
                 </Button>
               </Tooltip>
             </Grid>
@@ -602,7 +634,119 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
                       onChange={(e) => setNewTextElementText(e.target.value)}
                       margin="normal"
                       tabIndex={4}
+                    />
+                  </Box>
+                </Grid>
+              </Grid>
+            )}
+
+            {modalElementToCreate === SLIDE_ELEMENT_IMAGE && (
+              <Grid
+                container
+                spacing={2}
+                justifyContent={'center'}
+                direction={'row'}
+                alignItems={'center'}
+                columns={16}
+              >
+                <Grid item xs={16} sm={8}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Width:</Typography>
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      placeholder="Width (%)"
+                      type="number"
+                      required={true}
+                      inputProps={{
+                        min: 0,
+                        max: 100,
+                      }}
+                      name="widthOfNewElementImageArea"
+                      value={newImageElementWidth}
+                      onChange={(e) => setNewImageElementWidth(e.target.value)}
+                      margin="normal"
+                      tabIndex={0}
                       autoFocus
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={16} sm={8}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Height:</Typography>
+                    <TextField
+                      variant="outlined"
+                      fullWidth
+                      placeholder="Height (%)"
+                      required={true}
+                      type="number"
+                      inputProps={{
+                        min: 0,
+                        max: 100,
+                      }}
+                      name="heightOfNewElementImageArea"
+                      value={newImageElementHeight}
+                      onChange={(e) => setNewImageElementHeight(e.target.value)}
+                      margin="normal"
+                      tabIndex={1}
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={16}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Image source:</Typography>
+                    <TextField
+                      variant="outlined"
+                      fullWidth
+                      placeholder="URL or base64 image string encoding"
+                      required={true}
+                      name="colorOfNewElementTextArea"
+                      value={newImageElementSrc}
+                      onChange={(e) => setNewImageElementSrc(e.target.value)}
+                      margin="normal"
+                      tabIndex={2}
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={16}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Description:</Typography>
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      placeholder="Image description"
+                      required={true}
+                      name="descriptionOfNewElementTextArea"
+                      value={newImageElementDescription}
+                      onChange={(e) =>
+                        setNewImageElementDescription(e.target.value)
+                      }
+                      margin="normal"
+                      tabIndex={3}
                     />
                   </Box>
                 </Grid>

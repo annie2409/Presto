@@ -13,7 +13,7 @@ import styled from 'styled-components';
 import { updateStore } from '../apis/store';
 import { useMutation } from 'react-query';
 import { useUserDataContext } from '../context/UserDataContext';
-import { SLIDE_ELEMENT_TEXT } from '../utils/constants';
+import { SLIDE_ELEMENT_IMAGE, SLIDE_ELEMENT_TEXT } from '../utils/constants';
 
 const PaperContainer = styled.div`
   position: relative;
@@ -91,43 +91,64 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
       >
         <PaperContainer>
           {slideData.elements.map((ele, index) => {
-            return (
-              <Box
-                key={index}
-                position={'absolute'}
-                width={`${ele.width}%`}
-                height={`${ele.height}%`}
-                top={`${parseInt(ele.x)}%`}
-                left={`${parseInt(ele.y)}%`}
-                overflow={'hidden'}
-                textOverflow={'clip'}
-                border={'0.75px solid #ddd'}
-                zIndex={index}
-                onDoubleClick={() => {
-                  setElementToEditIdx(index);
-                  setModalElementToEdit(ele.type);
-                  setEditTextElementFontColor(ele.fontColor);
-                  setEditTextElementFontSize(ele.fontSize);
-                  setEditTextElementHeight(ele.height);
-                  setEditTextElementWidth(ele.width);
-                  setEditTextElementText(ele.text);
-                  setShowEditElementModal(true);
-                  setEditTextElementPosX(ele.x);
-                  setEditTextElementPosY(ele.y);
-                }}
-              >
-                <Typography
+            if (ele.type === SLIDE_ELEMENT_TEXT) {
+              return (
+                <Box
                   key={index}
-                  fontSize={`${ele.fontSize}em`}
-                  color={ele.fontColor}
-                  textOverflow={'clip'}
+                  position={'absolute'}
                   width={`${ele.width}%`}
                   height={`${ele.height}%`}
+                  top={`${parseInt(ele.x)}%`}
+                  left={`${parseInt(ele.y)}%`}
+                  overflow={'hidden'}
+                  textOverflow={'clip'}
+                  border={'0.75px solid #ddd'}
+                  zIndex={index}
+                  onDoubleClick={() => {
+                    setElementToEditIdx(index);
+                    setModalElementToEdit(ele.type);
+                    setEditTextElementFontColor(ele.fontColor);
+                    setEditTextElementFontSize(ele.fontSize);
+                    setEditTextElementHeight(ele.height);
+                    setEditTextElementWidth(ele.width);
+                    setEditTextElementText(ele.text);
+                    setShowEditElementModal(true);
+                    setEditTextElementPosX(ele.x);
+                    setEditTextElementPosY(ele.y);
+                  }}
                 >
-                  {ele.text}
-                </Typography>
-              </Box>
-            );
+                  <Typography
+                    key={index}
+                    fontSize={`${ele.fontSize}em`}
+                    color={ele.fontColor}
+                    textOverflow={'clip'}
+                  >
+                    {ele.text}
+                  </Typography>
+                </Box>
+              );
+            } else if (ele.type === SLIDE_ELEMENT_IMAGE) {
+              return (
+                <Box
+                  key={index}
+                  position={'absolute'}
+                  top={`${parseInt(ele.x)}%`}
+                  left={`${parseInt(ele.y)}%`}
+                  width={`${ele.width}%`}
+                  height={`${ele.height}%`}
+                  zIndex={index}
+                >
+                  <img
+                    src={ele.src}
+                    alt={ele.description}
+                    width={'100%'}
+                    height={'100'}
+                  />
+                </Box>
+              );
+            } else {
+              return <div key={index}>Unknown type</div>;
+            }
           })}
           <Box
             maxWidth={50}
