@@ -23,11 +23,13 @@ export const Slide = ({ slideNumber, slideData }) => {
           return (
             <Box
               key={index}
+              position={'absolute'}
               width={`${ele.width}%`}
               height={`${ele.height}%`}
               overflow={'hidden'}
               textOverflow={'clip'}
               border={'0.75px solid #ddd'}
+              zIndex={index}
             >
               <Typography
                 key={index}
