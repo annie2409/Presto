@@ -142,7 +142,7 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
                     src={ele.src}
                     alt={ele.description}
                     width={'100%'}
-                    height={'100'}
+                    height={'100%'}
                   />
                 </Box>
               );
