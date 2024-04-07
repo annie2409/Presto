@@ -23,17 +23,19 @@ export const Slide = ({ slideNumber, slideData }) => {
           return (
             <Box
               key={index}
-              maxWidth={`${ele.width}%`}
-              maxHeight={`${ele.height}%`}
+              width={`${ele.width}%`}
+              height={`${ele.height}%`}
               overflow={'hidden'}
               textOverflow={'clip'}
+              border={'0.75px solid #ddd'}
             >
               <Typography
+                key={index}
                 fontSize={ele.fontSize}
                 color={ele.fontColor}
                 textOverflow={'clip'}
-                maxWidth={ele.width}
-                maxHeight={ele.height}
+                width={`${ele.width}%`}
+                height={`${ele.height}%`}
               >
                 {ele.text}
               </Typography>

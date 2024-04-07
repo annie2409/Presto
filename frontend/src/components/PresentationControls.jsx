@@ -522,7 +522,7 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
                         min: 0,
                         max: 100,
                       }}
-                      name="widthOfNewElementTextArea"
+                      name="heightOfNewElementTextArea"
                       value={newTextElementHeight}
                       onChange={(e) => setNewTextElementHeight(e.target.value)}
                       margin="normal"
@@ -593,7 +593,7 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
                       variant="outlined"
                       placeholder="Text to display"
                       required={true}
-                      name="widthOfNewElementTextArea"
+                      name="textOfNewElementTextArea"
                       value={newTextElementText}
                       onChange={(e) => setNewTextElementText(e.target.value)}
                       margin="normal"
