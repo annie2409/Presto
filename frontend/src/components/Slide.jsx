@@ -28,6 +28,8 @@ import 'highlight.js/styles/github.css';
 import javascript from 'highlight.js/lib/languages/javascript';
 import python from 'highlight.js/lib/languages/python';
 import c from 'highlight.js/lib/languages/c';
+import { useTheme } from '@mui/material/styles';
+import Dropdown from './Dropdown';
 
 const PaperContainer = styled.div`
   position: relative;
@@ -40,7 +42,19 @@ const EditElementToolContainer = styled.div`
 `;
 
 export const Slide = ({ presentationId, slideNumber, slideData }) => {
-  console.log(slideData);
+  const theme = useTheme();
+  const defaultFontFamily = [
+    '-apple-system',
+    'BlinkMacSystemFont',
+    '"Segoe UI"',
+    'Roboto',
+    '"Helvetica Neue"',
+    'Arial',
+    'sans-serif',
+    '"Apple Color Emoji"',
+    '"Segoe UI Emoji"',
+    '"Segoe UI Symbol"',
+  ];
 
   const { userData, updateUserData } = useUserDataContext();
 
@@ -55,6 +69,8 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
   const [editTextElementText, setEditTextElementText] = useState('');
   const [editTextElementFontSize, setEditTextElementFontSize] = useState(null);
   const [editTextElementColor, setEditTextElementFontColor] = useState(null);
+  const [editTextElementFontFamily, setEditTextElementFontFamily] =
+    useState(null);
 
   const [editElementPosX, setEditElementPosX] = useState(null);
   const [editElementPosY, setEditElementPosY] = useState(null);
@@ -134,6 +150,7 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
       currentElement.fontSize = editTextElementFontSize;
       currentElement.height = editTextElementHeight;
       currentElement.width = editTextElementWidth;
+      currentElement.fontFamily = editTextElementFontFamily;
     } else if (modalElementToEdit === SLIDE_ELEMENT_IMAGE) {
       currentElement.src = editImageElementSrc;
       currentElement.description = editImageElementDescription;
@@ -190,17 +207,32 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
                     setShowEditElementModal(true);
                     setEditElementPosX(ele.x);
                     setEditElementPosY(ele.y);
+                    setEditTextElementFontFamily(ele.fontFamily);
                   }}
-                  on
                 >
-                  <Typography
-                    key={index}
-                    fontSize={`${ele.fontSize}em`}
-                    color={ele.fontColor}
-                    textOverflow={'clip'}
-                  >
-                    {ele.text}
-                  </Typography>
+                  {ele.fontFamily && (
+                    <Typography
+                      key={index}
+                      fontSize={`${ele.fontSize}em`}
+                      color={ele.fontColor}
+                      textOverflow={'clip'}
+                      sx={{
+                        fontFamily: `${ele.fontFamily}`,
+                      }}
+                    >
+                      {ele.text}
+                    </Typography>
+                  )}
+                  {!ele.fontFamily && (
+                    <Typography
+                      key={index}
+                      fontSize={`${ele.fontSize}em`}
+                      color={ele.fontColor}
+                      textOverflow={'clip'}
+                    >
+                      {ele.text}
+                    </Typography>
+                  )}
                 </Box>
               );
             } else if (ele.type === SLIDE_ELEMENT_IMAGE) {
@@ -545,6 +577,24 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
                       }
                       margin="normal"
                       tabIndex={5}
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={16}>
+                  <Box
+                    fullWidth
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Font Family:</Typography>
+                    <Dropdown
+                      title={'Select a font family'}
+                      options={defaultFontFamily}
+                      onSelect={setEditTextElementFontFamily}
+                      preSelect={editTextElementFontFamily}
                     />
                   </Box>
                 </Grid>
