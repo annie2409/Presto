@@ -668,7 +668,7 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
                         min: 0,
                         max: 100,
                       }}
-                      name="widthOfNewElementImageArea"
+                      name="imageWidth"
                       value={newImageElementWidth}
                       onChange={(e) => setNewImageElementWidth(e.target.value)}
                       margin="normal"
@@ -696,7 +696,7 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
                         min: 0,
                         max: 100,
                       }}
-                      name="heightOfNewElementImageArea"
+                      name="imageHeight"
                       value={newImageElementHeight}
                       onChange={(e) => setNewImageElementHeight(e.target.value)}
                       margin="normal"
@@ -718,7 +718,7 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
                       fullWidth
                       placeholder="URL or base64 image string encoding"
                       required={true}
-                      name="colorOfNewElementTextArea"
+                      name="imageSrc"
                       value={newImageElementSrc}
                       onChange={(e) => setNewImageElementSrc(e.target.value)}
                       margin="normal"
@@ -740,7 +740,7 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
                       variant="outlined"
                       placeholder="Image description"
                       required={true}
-                      name="descriptionOfNewElementTextArea"
+                      name="imageDescription"
                       value={newImageElementDescription}
                       onChange={(e) =>
                         setNewImageElementDescription(e.target.value)

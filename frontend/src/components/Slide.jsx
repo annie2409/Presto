@@ -37,8 +37,15 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
   const [editTextElementText, setEditTextElementText] = useState('');
   const [editTextElementFontSize, setEditTextElementFontSize] = useState(null);
   const [editTextElementColor, setEditTextElementFontColor] = useState(null);
-  const [editTextElementPosX, setEditTextElementPosX] = useState(null);
-  const [editTextElementPosY, setEditTextElementPosY] = useState(null);
+
+  const [editElementPosX, setEditElementPosX] = useState(null);
+  const [editElementPosY, setEditElementPosY] = useState(null);
+
+  const [editImageElementWidth, setEditImageElementWidth] = useState(null);
+  const [editImageElementHeight, setEditImageElementHeight] = useState(null);
+  const [editImageElementSrc, setEditImageElementSrc] = useState('');
+  const [editImageElementDescription, setEditImageElementDescription] =
+    useState('');
 
   const { mutate, isLoading } = useMutation(updateStore, {
     onError: (data) => {
@@ -50,6 +57,8 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
     switch (modalElementToEdit) {
       case SLIDE_ELEMENT_TEXT:
         return 'Edit TEXT';
+      case SLIDE_ELEMENT_IMAGE:
+        return 'Edit IMAGE';
     }
     return 'Unkonwn';
   };
@@ -65,14 +74,20 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
       .getPresentationById(presentationId)
       .getSlideByIndex(slideNumber - 1).elements[elementToEditIdx];
 
+    currentElement.x = editElementPosX;
+    currentElement.y = editElementPosY;
+
     if (modalElementToEdit === SLIDE_ELEMENT_TEXT) {
       currentElement.text = editTextElementText;
       currentElement.fontColor = editTextElementColor;
       currentElement.fontSize = editTextElementFontSize;
       currentElement.height = editTextElementHeight;
       currentElement.width = editTextElementWidth;
-      currentElement.x = editTextElementPosX;
-      currentElement.y = editTextElementPosY;
+    } else if (modalElementToEdit === SLIDE_ELEMENT_IMAGE) {
+      currentElement.src = editImageElementSrc;
+      currentElement.description = editImageElementDescription;
+      currentElement.height = editImageElementHeight;
+      currentElement.width = editImageElementWidth;
     }
 
     mutate(userData.toJSON());
@@ -113,8 +128,8 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
                     setEditTextElementWidth(ele.width);
                     setEditTextElementText(ele.text);
                     setShowEditElementModal(true);
-                    setEditTextElementPosX(ele.x);
-                    setEditTextElementPosY(ele.y);
+                    setEditElementPosX(ele.x);
+                    setEditElementPosY(ele.y);
                   }}
                 >
                   <Typography
@@ -137,6 +152,17 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
                   width={`${ele.width}%`}
                   height={`${ele.height}%`}
                   zIndex={index}
+                  onDoubleClick={() => {
+                    setElementToEditIdx(index);
+                    setModalElementToEdit(ele.type);
+                    setEditImageElementDescription(ele.description);
+                    setEditImageElementHeight(ele.height);
+                    setEditImageElementWidth(ele.width);
+                    setEditImageElementSrc(ele.src);
+                    setShowEditElementModal(true);
+                    setEditElementPosX(ele.x);
+                    setEditElementPosY(ele.y);
+                  }}
                 >
                   <img
                     src={ele.src}
@@ -218,8 +244,8 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
                       max: 100,
                     }}
                     name="posXOfNewElementTextArea"
-                    value={editTextElementPosX}
-                    onChange={(e) => setEditTextElementPosX(e.target.value)}
+                    value={editElementPosX}
+                    onChange={(e) => setEditElementPosX(e.target.value)}
                     margin="normal"
                     tabIndex={0}
                     autoFocus
@@ -246,8 +272,8 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
                       max: 100,
                     }}
                     name="posYOfNewElementTextArea"
-                    value={editTextElementPosY}
-                    onChange={(e) => setEditTextElementPosY(e.target.value)}
+                    value={editElementPosY}
+                    onChange={(e) => setEditElementPosY(e.target.value)}
                     margin="normal"
                     tabIndex={1}
                     autoFocus
@@ -386,6 +412,120 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
                       onChange={(e) => setEditTextElementText(e.target.value)}
                       margin="normal"
                       tabIndex={6}
+                    />
+                  </Box>
+                </Grid>
+              </Grid>
+            )}
+
+            {modalElementToEdit === SLIDE_ELEMENT_IMAGE && (
+              <Grid
+                container
+                spacing={2}
+                justifyContent={'center'}
+                direction={'row'}
+                alignItems={'center'}
+                columns={16}
+              >
+                <Grid item xs={16} sm={8}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Width:</Typography>
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      placeholder="Width (%)"
+                      type="number"
+                      required={true}
+                      inputProps={{
+                        min: 0,
+                        max: 100,
+                      }}
+                      name="widthOEditElementImageArea"
+                      value={editImageElementWidth}
+                      onChange={(e) => setEditImageElementWidth(e.target.value)}
+                      margin="normal"
+                      tabIndex={2}
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={16} sm={8}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Height:</Typography>
+                    <TextField
+                      variant="outlined"
+                      fullWidth
+                      placeholder="Height (%)"
+                      required={true}
+                      type="number"
+                      inputProps={{
+                        min: 0,
+                        max: 100,
+                      }}
+                      name="heightOfNewElementImageArea"
+                      value={editImageElementHeight}
+                      onChange={(e) =>
+                        setEditImageElementHeight(e.target.value)
+                      }
+                      margin="normal"
+                      tabIndex={3}
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={16}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Image source:</Typography>
+                    <TextField
+                      variant="outlined"
+                      fullWidth
+                      placeholder="URL or base64 image string encoding"
+                      required={true}
+                      name="imageSrc"
+                      value={editImageElementSrc}
+                      onChange={(e) => setEditImageElementSrc(e.target.value)}
+                      margin="normal"
+                      tabIndex={4}
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={16}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Description:</Typography>
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      placeholder="Image description"
+                      required={true}
+                      name="imageDescription"
+                      value={editImageElementDescription}
+                      onChange={(e) =>
+                        setEditImageElementDescription(e.target.value)
+                      }
+                      margin="normal"
+                      tabIndex={5}
                     />
                   </Box>
                 </Grid>
