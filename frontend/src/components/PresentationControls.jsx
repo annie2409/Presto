@@ -870,7 +870,7 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
                     <TextField
                       variant="outlined"
                       fullWidth
-                      placeholder="Youtube URL"
+                      placeholder="Youtube embeded URL"
                       required={true}
                       name="videoSrc"
                       value={newVideoElementSrc}

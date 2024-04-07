@@ -5,6 +5,7 @@ import {
   Checkbox,
   FormControlLabel,
   Grid,
+  IconButton,
   Modal,
   Paper,
   TextField,
@@ -20,11 +21,16 @@ import {
   SLIDE_ELEMENT_TEXT,
   SLIDE_ELEMENT_VIDEO,
 } from '../utils/constants';
+import { Delete, ModeEdit } from '@mui/icons-material';
 
 const PaperContainer = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
+`;
+
+const EditElementToolContainer = styled.div`
+  position: relative;
 `;
 
 export const Slide = ({ presentationId, slideNumber, slideData }) => {
@@ -59,11 +65,22 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
   const [editVideoElementShouldAutoplay, setEditVideoElementShouldAutoplay] =
     useState(null);
 
+  const [showElementEditTools, setShowElementEditTools] = useState(false);
+
   const { mutate, isLoading } = useMutation(updateStore, {
     onError: (data) => {
       setElementUpdateErrorMessage(data.message);
     },
   });
+
+  const deleteElement = (idx) => {
+    userData
+      .getPresentationById(presentationId)
+      .getSlideByIndex(slideNumber - 1)
+      .elements.splice(idx, 1);
+    mutate(userData.toJSON());
+    updateUserData(userData);
+  };
 
   const getEditElementModalTitle = () => {
     switch (modalElementToEdit) {
@@ -71,6 +88,8 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
         return 'Edit TEXT';
       case SLIDE_ELEMENT_IMAGE:
         return 'Edit IMAGE';
+      case SLIDE_ELEMENT_VIDEO:
+        return 'Edit VIDEO';
     }
     return 'Unkonwn';
   };
@@ -100,6 +119,11 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
       currentElement.description = editImageElementDescription;
       currentElement.height = editImageElementHeight;
       currentElement.width = editImageElementWidth;
+    } else if (modalElementToEdit === SLIDE_ELEMENT_VIDEO) {
+      currentElement.src = editVideoElementSrc;
+      currentElement.shouldAutoPlay = editVideoElementShouldAutoplay;
+      currentElement.height = editVideoElementHeight;
+      currentElement.width = editVideoElementWidth;
     }
 
     mutate(userData.toJSON());
@@ -121,6 +145,7 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
             if (ele.type === SLIDE_ELEMENT_TEXT) {
               return (
                 <Box
+                  onContextMenu={() => deleteElement(index)}
                   key={index}
                   position={'absolute'}
                   width={`${ele.width}%`}
@@ -143,6 +168,7 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
                     setEditElementPosX(ele.x);
                     setEditElementPosY(ele.y);
                   }}
+                  on
                 >
                   <Typography
                     key={index}
@@ -175,6 +201,7 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
                     setEditElementPosX(ele.x);
                     setEditElementPosY(ele.y);
                   }}
+                  onContextMenu={() => deleteElement(index)}
                 >
                   <img
                     src={ele.src}
@@ -196,6 +223,8 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
                   width={`${ele.width}%`}
                   height={`${ele.height}%`}
                   zIndex={index}
+                  onMouseEnter={() => setShowElementEditTools(true)}
+                  onMouseLeave={() => setShowElementEditTools(false)}
                   onDoubleClick={() => {
                     setElementToEditIdx(index);
                     setModalElementToEdit(ele.type);
@@ -215,6 +244,36 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
                     src={url}
                     allowfullscreen
                   ></iframe>
+
+                  {showElementEditTools && (
+                    <EditElementToolContainer>
+                      <IconButton
+                        position={'absolute'}
+                        top={0}
+                        left={0}
+                        zIndex={index + 1}
+                        onClick={() => {
+                          setElementToEditIdx(index);
+                          setModalElementToEdit(ele.type);
+                          setEditImageElementDescription(ele.description);
+                          setEditImageElementHeight(ele.height);
+                          setEditImageElementWidth(ele.width);
+                          setEditImageElementSrc(ele.src);
+                          setShowEditElementModal(true);
+                          setEditElementPosX(ele.x);
+                          setEditElementPosY(ele.y);
+                        }}
+                      >
+                        <ModeEdit />
+                      </IconButton>
+                      <IconButton
+                        aria-label="delete-element"
+                        onClick={() => deleteElement(index)}
+                      >
+                        <Delete />
+                      </IconButton>
+                    </EditElementToolContainer>
+                  )}
                 </Box>
               );
             } else {
