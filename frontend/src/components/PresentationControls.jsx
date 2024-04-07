@@ -23,6 +23,7 @@ import { updateStore } from '../apis/store';
 import { useUserDataContext } from '../context/UserDataContext';
 import {
   Backspace,
+  Code,
   Image,
   Movie,
   NoteAdd,
@@ -30,6 +31,7 @@ import {
 } from '@mui/icons-material';
 import Checkbox from '@mui/material/Checkbox';
 import {
+  SLIDE_ELEMENT_CODE,
   SLIDE_ELEMENT_IMAGE,
   SLIDE_ELEMENT_TEXT,
   SLIDE_ELEMENT_VIDEO,
@@ -72,6 +74,11 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
   const [newVideoElementSrc, setNewVideoElementSrc] = useState('');
   const [newVideoElementShouldAutoPlay, setNewVideoElementShouldAutoPlay] =
     useState(false);
+
+  const [newCodeElementWidth, setNewCodeElementWidth] = useState('');
+  const [newCodeElementHeight, setNewCodeElementHeight] = useState('');
+  const [newCodeElementFontSize, setNewCodeElementFontSize] = useState('');
+  const [newCodeElementText, setNewCodeElementText] = useState('');
 
   const { userData, updateUserData } = useUserDataContext();
 
@@ -178,6 +185,8 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
         return 'Create new IMAGE';
       case SLIDE_ELEMENT_VIDEO:
         return 'Create new VIDEO';
+      case SLIDE_ELEMENT_CODE:
+        return 'Create new CODE';
     }
     return 'Unkonwn';
   };
@@ -216,7 +225,17 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
         src: newVideoElementSrc,
         shouldAutoPlay: newVideoElementShouldAutoPlay,
       };
+    } else if (modalElementToCreate === SLIDE_ELEMENT_CODE) {
+      newElement = {
+        ...newElement,
+        type: SLIDE_ELEMENT_CODE,
+        width: newCodeElementWidth,
+        height: newCodeElementHeight,
+        code: newCodeElementText,
+        fontSize: newCodeElementFontSize,
+      };
     }
+
     userData
       .getPresentationById(presentation.id)
       .getSlideByIndex(currentSlideIndex - 1)
@@ -232,6 +251,14 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
     setNewImageElementHeight(null);
     setNewImageElementDescription('');
     setNewImageElementSrc('');
+    setNewCodeElementText('');
+    setNewCodeElementFontSize('');
+    setNewCodeElementWidth('');
+    setNewCodeElementHeight('');
+    setNewVideoElementHeight('');
+    setNewVideoElementWidth('');
+    setNewVideoElementSrc('');
+    setNewVideoElementShouldAutoPlay(false);
     closeNewElementModal();
   };
 
@@ -338,6 +365,19 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
                   onClick={() => createNewElement(SLIDE_ELEMENT_VIDEO)}
                 >
                   <Movie />
+                </Button>
+              </Tooltip>
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <Tooltip title="Add code block on to the slide">
+                <Button
+                  variant="contained"
+                  disabled={mutateWithoutFollowupActionLoading}
+                  color="warning"
+                  onClick={() => createNewElement(SLIDE_ELEMENT_CODE)}
+                >
+                  <Code />
                 </Button>
               </Tooltip>
             </Grid>
@@ -901,6 +941,123 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
                           }
                         />
                       }
+                    />
+                  </Box>
+                </Grid>
+              </Grid>
+            )}
+
+            {modalElementToCreate === SLIDE_ELEMENT_CODE && (
+              <Grid
+                container
+                spacing={2}
+                justifyContent={'center'}
+                direction={'row'}
+                alignItems={'center'}
+                columns={16}
+              >
+                <Grid item xs={16} sm={8}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Width:</Typography>
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      placeholder="Width (%)"
+                      type="number"
+                      required={true}
+                      inputProps={{
+                        min: 0,
+                        max: 100,
+                      }}
+                      name="codeBlockWidth"
+                      value={newCodeElementWidth}
+                      onChange={(e) => setNewCodeElementWidth(e.target.value)}
+                      margin="normal"
+                      tabIndex={0}
+                      autoFocus
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={16} sm={8}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Height:</Typography>
+                    <TextField
+                      variant="outlined"
+                      fullWidth
+                      placeholder="Height (%)"
+                      required={true}
+                      type="number"
+                      inputProps={{
+                        min: 0,
+                        max: 100,
+                      }}
+                      name="codeBlockHeight"
+                      value={newCodeElementHeight}
+                      onChange={(e) => setNewCodeElementHeight(e.target.value)}
+                      margin="normal"
+                      tabIndex={1}
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={16}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Font size:</Typography>
+                    <TextField
+                      variant="outlined"
+                      fullWidth
+                      placeholder="Size (em)"
+                      type="number"
+                      required={true}
+                      name="codeBlockFontSize"
+                      value={newCodeElementFontSize}
+                      onChange={(e) =>
+                        setNewCodeElementFontSize(e.target.value)
+                      }
+                      margin="normal"
+                      tabIndex={2}
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={16}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Code:</Typography>
+                    <TextField
+                      fullWidth
+                      multiline
+                      label="code text area"
+                      variant="outlined"
+                      placeholder="Text to display"
+                      required={true}
+                      rows={5}
+                      name="codeBlockCode"
+                      value={newCodeElementText}
+                      onChange={(e) => setNewCodeElementText(e.target.value)}
+                      margin="normal"
+                      tabIndex={3}
                     />
                   </Box>
                 </Grid>

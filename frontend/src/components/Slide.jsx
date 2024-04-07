@@ -11,17 +11,23 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { updateStore } from '../apis/store';
 import { useMutation } from 'react-query';
 import { useUserDataContext } from '../context/UserDataContext';
 import {
+  SLIDE_ELEMENT_CODE,
   SLIDE_ELEMENT_IMAGE,
   SLIDE_ELEMENT_TEXT,
   SLIDE_ELEMENT_VIDEO,
 } from '../utils/constants';
 import { Delete, ModeEdit } from '@mui/icons-material';
+import hljs from 'highlight.js';
+import 'highlight.js/styles/github.css';
+import javascript from 'highlight.js/lib/languages/javascript';
+import python from 'highlight.js/lib/languages/python';
+import c from 'highlight.js/lib/languages/c';
 
 const PaperContainer = styled.div`
   position: relative;
@@ -65,6 +71,11 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
   const [editVideoElementShouldAutoplay, setEditVideoElementShouldAutoplay] =
     useState(null);
 
+  const [editCodeElementWidth, setEditCodeElementWidth] = useState(null);
+  const [editCodeElementText, setEditCodeElementText] = useState(null);
+  const [editCodeElementHeight, setEditCodeElementHeight] = useState(null);
+  const [editCodeElementFontSize, setEditCodeElementFontSize] = useState(null);
+
   const [showElementEditTools, setShowElementEditTools] = useState(false);
 
   const { mutate, isLoading } = useMutation(updateStore, {
@@ -72,6 +83,13 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
       setElementUpdateErrorMessage(data.message);
     },
   });
+
+  useEffect(() => {
+    hljs.highlightAll();
+    hljs.registerLanguage('javascript', javascript);
+    hljs.registerLanguage('python', python);
+    hljs.registerLanguage('c', c);
+  }, [slideData, slideNumber]);
 
   const deleteElement = (idx) => {
     userData
@@ -90,6 +108,8 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
         return 'Edit IMAGE';
       case SLIDE_ELEMENT_VIDEO:
         return 'Edit VIDEO';
+      case SLIDE_ELEMENT_CODE:
+        return 'Edit CODE';
     }
     return 'Unkonwn';
   };
@@ -145,7 +165,10 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
             if (ele.type === SLIDE_ELEMENT_TEXT) {
               return (
                 <Box
-                  onContextMenu={() => deleteElement(index)}
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    deleteElement(index);
+                  }}
                   key={index}
                   position={'absolute'}
                   width={`${ele.width}%`}
@@ -213,7 +236,6 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
               );
             } else if (ele.type === SLIDE_ELEMENT_VIDEO) {
               const url = `${ele.src}?&autoplay=${ele.shouldAutoPlay ? 1 : 0}`;
-              console.log(url);
               return (
                 <Box
                   key={index}
@@ -274,6 +296,34 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
                       </IconButton>
                     </EditElementToolContainer>
                   )}
+                </Box>
+              );
+            } else if (ele.type === SLIDE_ELEMENT_CODE) {
+              return (
+                <Box
+                  key={index}
+                  position={'absolute'}
+                  top={`${parseInt(ele.x)}%`}
+                  left={`${parseInt(ele.y)}%`}
+                  width={`${ele.width}%`}
+                  height={`${ele.height}%`}
+                  zIndex={index}
+                  onDoubleClick={() => {
+                    setElementToEditIdx(index);
+                    setModalElementToEdit(ele.type);
+                    setEditCodeElementHeight(ele.height);
+                    setEditCodeElementWidth(ele.width);
+                    setEditCodeElementFontSize(ele.fontSize);
+                    setEditCodeElementText(ele.code);
+                    setShowEditElementModal(true);
+                    setEditElementPosX(ele.x);
+                    setEditElementPosY(ele.y);
+                  }}
+                  onContextMenu={() => deleteElement(index)}
+                >
+                  <pre>
+                    <code>{ele.code}</code>
+                  </pre>
                 </Box>
               );
             } else {
@@ -745,6 +795,123 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
                           }
                         />
                       }
+                    />
+                  </Box>
+                </Grid>
+              </Grid>
+            )}
+
+            {modalElementToEdit === SLIDE_ELEMENT_CODE && (
+              <Grid
+                container
+                spacing={2}
+                justifyContent={'center'}
+                direction={'row'}
+                alignItems={'center'}
+                columns={16}
+              >
+                <Grid item xs={16} sm={8}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Width:</Typography>
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      placeholder="Width (%)"
+                      type="number"
+                      required={true}
+                      inputProps={{
+                        min: 0,
+                        max: 100,
+                      }}
+                      name="codeBlockWidth"
+                      value={editCodeElementWidth}
+                      onChange={(e) => setEditCodeElementWidth(e.target.value)}
+                      margin="normal"
+                      tabIndex={2}
+                      autoFocus
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={16} sm={8}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Height:</Typography>
+                    <TextField
+                      variant="outlined"
+                      fullWidth
+                      placeholder="Height (%)"
+                      required={true}
+                      type="number"
+                      inputProps={{
+                        min: 0,
+                        max: 100,
+                      }}
+                      name="codeBlockHeight"
+                      value={editCodeElementHeight}
+                      onChange={(e) => setEditCodeElementHeight(e.target.value)}
+                      margin="normal"
+                      tabIndex={3}
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={16}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Font size:</Typography>
+                    <TextField
+                      variant="outlined"
+                      fullWidth
+                      placeholder="Size (em)"
+                      type="number"
+                      required={true}
+                      name="codeBlockFontSize"
+                      value={editCodeElementFontSize}
+                      onChange={(e) =>
+                        setEditCodeElementFontSize(e.target.value)
+                      }
+                      margin="normal"
+                      tabIndex={4}
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={16}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Code:</Typography>
+                    <TextField
+                      fullWidth
+                      multiline
+                      label="code text area"
+                      variant="outlined"
+                      placeholder="Text to display"
+                      required={true}
+                      rows={5}
+                      name="codeBlockCode"
+                      value={editCodeElementText}
+                      onChange={(e) => setEditCodeElementText(e.target.value)}
+                      margin="normal"
+                      tabIndex={5}
                     />
                   </Box>
                 </Grid>

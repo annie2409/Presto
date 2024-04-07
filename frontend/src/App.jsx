@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom'; // Import Routes and Route components
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
@@ -10,6 +10,11 @@ import { AuthProvider } from './context/AuthContext';
 import { dashboardPage, loginPage, editPresentationPage, registerPage } from './utils/routes';
 import { EditPresentation } from './pages/EditPresentation';
 import { UserDataProvider } from './context/UserDataContext';
+import hljs from 'highlight.js';
+import 'highlight.js/styles/github.css';
+import javascript from 'highlight.js/lib/languages/javascript';
+import python from 'highlight.js/lib/languages/python';
+import c from 'highlight.js/lib/languages/c';
 
 const queryClient = new QueryClient();
 
@@ -25,6 +30,14 @@ const fallbackRender = ({ error, resetErrorBoundary }) => {
 };
 
 const App = () => {
+  useEffect(() => {
+    hljs.highlightAll();
+    hljs.highlightAll();
+    hljs.registerLanguage('javascript', javascript);
+    hljs.registerLanguage('python', python);
+    hljs.registerLanguage('c', c);
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
