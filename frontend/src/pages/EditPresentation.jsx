@@ -149,6 +149,7 @@ export const EditPresentation = () => {
           <SlideContainer>
             {hasSlides && (
               <Slide
+                presentationId={presentationId}
                 slideNumber={currentSlideIndex}
                 slideData={getPresentation().getSlideByIndex(
                   currentSlideIndex - 1,

@@ -70,7 +70,7 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
     isLoading: mutateWithoutFollowupActionLoading,
   } = useMutation(updateStore, {
     onSuccess: (data) => {
-      console.log(data);
+      console.debug(data);
     },
     onError: (data) => {
       console.error(data.message);
@@ -167,7 +167,7 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
         width: newTextElementWidth,
         height: newTextElementHeight,
         text: newTextElementText,
-        fontSize: `${newTextElementFontSize}em`,
+        fontSize: newTextElementFontSize,
         fontColor: newTextElementColor,
       };
       userData
@@ -177,6 +177,11 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
       console.log(userData);
       mutateWithoutFollowupAction(userData.toJSON());
       updateUserData(userData);
+      setNewTextElementFontColor(null);
+      setNewTextElementFontSize(null);
+      setNewTextElementHeight(null);
+      setNewTextElementWidth(null);
+      setNewTextElementText('');
     }
     closeNewElementModal();
   };
