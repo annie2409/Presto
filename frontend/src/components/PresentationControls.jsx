@@ -20,7 +20,8 @@ import { dashboardPage } from '../utils/routes';
 import { useMutation } from 'react-query';
 import { updateStore } from '../apis/store';
 import { useUserDataContext } from '../context/UserDataContext';
-import { Backspace, NoteAdd } from '@mui/icons-material';
+import { Backspace, NoteAdd, TextFields } from '@mui/icons-material';
+import { SLIDE_ELEMENT_TEXT } from '../utils/constants';
 
 export const PresentationControls = ({ currentSlideIndex, presentation }) => {
   const navigation = useNavigate();
@@ -36,6 +37,17 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
   const [showEditTitleModal, setShowEditTitleModal] = useState(false);
   const [editTitleErrorMessage, setEditTitleErrorMessage] = useState('');
   const [editPresentationTitle, setEditPresentationTitle] = useState('');
+
+  const [showNewElementModal, setShowNewElementModal] = useState(false);
+  const [elementUpdateErrorMessage, setElementUpdateErrorMessage] =
+    useState('');
+  const [modalElementToCreate, setModalElementToCreate] = useState(null);
+
+  const [newTextElementWidth, setNewTextElementWidth] = useState(null);
+  const [newTextElementHeight, setNewTextElementHeight] = useState(null);
+  const [newTextElementText, setNewTextElementText] = useState('');
+  const [newTextElementFontSize, setNewTextElementFontSize] = useState(null);
+  const [newTextElementColor, setNewTextElementFontColor] = useState(null);
 
   const { userData, updateUserData } = useUserDataContext();
 
@@ -105,7 +117,7 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
     setDeleteErrorMessage('');
   };
 
-  const closeEditTitleodal = () => {
+  const closeEditTitleModal = () => {
     setShowEditTitleModal(false);
     setEditPresentationTitle('');
     setEditTitleErrorMessage('');
@@ -131,6 +143,29 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
       mutateWithoutFollowupAction(userData.toJSON());
       updateUserData(userData);
     }
+  };
+
+  const closeNewElementModal = () => {
+    setShowNewElementModal(false);
+    setElementUpdateErrorMessage('');
+    setModalElementToCreate(null);
+  };
+
+  const createNewElement = (type) => {
+    setModalElementToCreate(type);
+    setShowNewElementModal(true);
+  };
+
+  const getNewElementModalTitle = () => {
+    switch (modalElementToCreate) {
+      case SLIDE_ELEMENT_TEXT:
+        return 'Create new TEXT';
+    }
+    return 'Unkonwn';
+  };
+
+  const handleCreateNewElement = () => {
+    console.log(modalElementToCreate);
   };
 
   return (
@@ -202,6 +237,19 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
                 </Button>
               </Tooltip>
             </Grid>
+
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <Tooltip title="Add text on to the slide">
+                <Button
+                  variant="contained"
+                  disabled={mutateWithoutFollowupActionLoading}
+                  color="warning"
+                  onClick={() => createNewElement(SLIDE_ELEMENT_TEXT)}
+                >
+                  <TextFields />
+                </Button>
+              </Tooltip>
+            </Grid>
           </Grid>
         </Stack>
       </Container>
@@ -260,10 +308,7 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
           </Box>
         </Box>
       </Modal>
-      <Modal
-        open={showEditTitleModal}
-        onClose={() => setShowEditTitleModal(false)}
-      >
+      <Modal open={showEditTitleModal} onClose={closeEditTitleModal}>
         <Box
           sx={{
             position: 'absolute',
@@ -314,7 +359,7 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
               sx={{
                 marginLeft: '0.5em',
               }}
-              onClick={closeEditTitleodal}
+              onClick={closeEditTitleModal}
             >
               Cancel
             </Button>
@@ -372,6 +417,167 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
               onClick={closeDeletePresentationInsteadModal}
             >
               No
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
+      <Modal open={showNewElementModal} onClose={closeNewElementModal}>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            minWidth: 400,
+            width: '60%',
+            bgcolor: 'background.paper',
+            border: '2px solid #000',
+            justifyContent: 'center',
+            alignContent: 'center',
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <Typography
+            id="modal-modal-title"
+            variant="h6"
+            component="h2"
+            textAlign={'center'}
+          >
+            {getNewElementModalTitle()}
+          </Typography>
+          {elementUpdateErrorMessage !== '' && (
+            <Alert severity="error">{elementUpdateErrorMessage}</Alert>
+          )}
+          {modalElementToCreate === SLIDE_ELEMENT_TEXT && (
+            <Grid
+              container
+              spacing={2}
+              justifyContent={'center'}
+              direction={'row'}
+              alignItems={'center'}
+              columns={16}
+            >
+              <Grid item xs={16} sm={8}>
+                <Box
+                  display={'flex'}
+                  flexDirection={'row'}
+                  alignContent={'center'}
+                  alignItems={'center'}
+                  justifyContent={'flex-start'}
+                >
+                  <Typography marginRight={2}>Width:</Typography>
+                  <TextField
+                    variant="outlined"
+                    placeholder="Width (%)"
+                    type="number"
+                    required={true}
+                    inputProps={{
+                      min: 0,
+                      max: 100,
+                    }}
+                    name="widthOfNewElementTextArea"
+                    value={newTextElementWidth}
+                    onChange={(e) => setNewTextElementWidth(e.target.value)}
+                    margin="normal"
+                    tabIndex={0}
+                    autoFocus
+                  />
+                </Box>
+              </Grid>
+              <Grid item xs={16} sm={8}>
+                <Box
+                  display={'flex'}
+                  flexDirection={'row'}
+                  alignContent={'center'}
+                  alignItems={'center'}
+                  justifyContent={'flex-start'}
+                >
+                  <Typography marginRight={2}>Height:</Typography>
+                  <TextField
+                    variant="outlined"
+                    placeholder="Height (%)"
+                    required={true}
+                    type="number"
+                    inputProps={{
+                      min: 0,
+                      max: 100,
+                    }}
+                    name="widthOfNewElementTextArea"
+                    value={newTextElementHeight}
+                    onChange={(e) => setNewTextElementHeight(e.target.value)}
+                    margin="normal"
+                    tabIndex={1}
+                  />
+                </Box>
+              </Grid>
+              <Grid item xs={16} sm={8}>
+                <Box
+                  display={'flex'}
+                  flexDirection={'row'}
+                  alignContent={'center'}
+                  alignItems={'center'}
+                  justifyContent={'flex-start'}
+                >
+                  <Typography marginRight={2}>Font size:</Typography>
+                  <TextField
+                    variant="outlined"
+                    placeholder="Font size (em)"
+                    type="number"
+                    required={true}
+                    name="fontSizeOfNewElementTextArea"
+                    value={newTextElementFontSize}
+                    onChange={(e) => setNewTextElementFontSize(e.target.value)}
+                    margin="normal"
+                    tabIndex={2}
+                  />
+                </Box>
+              </Grid>
+              <Grid item xs={16} sm={8}>
+                <Box
+                  display={'flex'}
+                  flexDirection={'row'}
+                  alignContent={'center'}
+                  alignItems={'center'}
+                  justifyContent={'flex-start'}
+                >
+                  <Typography marginRight={2}>Font color:</Typography>
+                  <TextField
+                    variant="outlined"
+                    placeholder="Color (HEX code)"
+                    required={true}
+                    name="colorOfNewElementTextArea"
+                    value={newTextElementColor}
+                    onChange={(e) => setNewTextElementFontColor(e.target.value)}
+                    margin="normal"
+                    tabIndex={3}
+                  />
+                </Box>
+              </Grid>
+            </Grid>
+          )}
+
+          <Box display={'flex'} justifyContent={'center'} marginTop={1}>
+            <Button
+              variant="contained"
+              color="warning"
+              disabled={mutateWithoutFollowupActionLoading}
+              onClick={handleCreateNewElement}
+              sx={{
+                marginRight: '0.5em',
+              }}
+            >
+              Confirm
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{
+                marginLeft: '0.5em',
+              }}
+              onClick={closeNewElementModal}
+            >
+              Cancel
             </Button>
           </Box>
         </Box>
