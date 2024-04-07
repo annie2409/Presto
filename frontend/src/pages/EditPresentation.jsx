@@ -21,6 +21,7 @@ import {
   KeyboardArrowLeftRounded,
   KeyboardArrowRightRounded,
 } from '@mui/icons-material';
+import { useUserDataContext } from '../context/UserDataContext';
 
 const SlideContainer = styled.div`
   height: 100%;
@@ -48,12 +49,13 @@ export const EditPresentation = () => {
   const [sizes, setSizes] = useState([150, '30%', 'auto']);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(1);
 
-  const { data, isLoading, error } = useUserStorePolling();
+  // const { data, isLoading, error } = useUserStorePolling();
+  const { userData, isLoading, error, updateUserData } = useUserDataContext();
 
-  const userData =
-    data && data.store && data.store.store
-      ? UserData.fromData(data.store.store)
-      : new UserData();
+  // const userData =
+  //   data && data.store && data.store.store
+  //     ? UserData.fromData(data.store.store)
+  //     : new UserData();
 
   const getPresentation = () => {
     return userData.presentations.find(
@@ -61,17 +63,29 @@ export const EditPresentation = () => {
     );
   };
 
+  if (
+    getPresentation() &&
+    getPresentation().slides &&
+    currentSlideIndex > getPresentation().slides.length
+  ) {
+    setCurrentSlideIndex(getPresentation().slides.length);
+  }
+
+  if (getPresentation() && getPresentation().slides && currentSlideIndex <= 0) {
+    setCurrentSlideIndex(1);
+  }
+
   const showLeftArrow =
     getPresentation() &&
     getPresentation().slides &&
     getPresentation().slides.length >= 2 &&
-    currentSlideIndex !== 1;
+    currentSlideIndex > 1;
 
   const showRightArrow =
     getPresentation() &&
     getPresentation().slides &&
     getPresentation().slides.length >= 2 &&
-    currentSlideIndex !== getPresentation().slides.length;
+    currentSlideIndex < getPresentation().slides.length;
 
   const hasSlides =
     getPresentation() &&
@@ -103,7 +117,7 @@ export const EditPresentation = () => {
   }, [currentSlideIndex]);
 
   console.log(getPresentation());
-  if (isLoading) {
+  if (isLoading || !getPresentation()) {
     return <CircularProgress />;
   } else if (error) {
     return (

@@ -35,8 +35,7 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
   const { userData, updateUserData } = useUserDataContext();
 
   const { mutate, isLoading } = useMutation(updateStore, {
-    onSuccess: (data, variables) => {
-      console.log(data, variables);
+    onSuccess: (_, variables) => {
       updateUserData(userData);
       if (variables.nextPage) {
         navigation(variables.nextPage);
@@ -113,10 +112,12 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
   };
 
   const handleDeleteCurrentSlide = () => {
-    const targetSlide = userData.presentations.find(
+    const target = userData.presentations.find(
       (item) => item.id === parseInt(presentation.id),
     );
-    console.log(currentSlideIndex);
+    target.slides.splice(currentSlideIndex - 1, 1);
+    mutateWithoutFollowupAction(userData.toJSON());
+    updateUserData(userData);
   };
 
   return (
