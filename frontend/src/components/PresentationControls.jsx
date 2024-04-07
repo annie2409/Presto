@@ -36,7 +36,6 @@ import {
   SLIDE_ELEMENT_IMAGE,
   SLIDE_ELEMENT_TEXT,
   SLIDE_ELEMENT_VIDEO,
-  SLIDE_THEME,
 } from '../utils/constants';
 
 import ColorPicker, { useColorPicker } from 'react-best-gradient-color-picker';
@@ -88,13 +87,9 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
   const [currentSlideColor, setCurrentSlideColor] = useState(
     'rgba(255,255,255,1)',
   );
-  const {
-    setSolid: setCurrentSlideSolid,
-    setGradient: setCurrentSlideGradient,
-  } = useColorPicker(currentSlideColor, setCurrentSlideColor);
   const [allSlideColor, setAllSlideColor] = useState('rgba(255,255,255,1)');
-  const { setSolid: setAllSlideSolid, setGradient: setAllSlideGradient } =
-    useColorPicker(currentSlideColor, setCurrentSlideColor);
+
+  useColorPicker(currentSlideColor, setCurrentSlideColor);
 
   const { userData, updateUserData } = useUserDataContext();
 
@@ -418,7 +413,23 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
                   variant="contained"
                   disabled={mutateWithoutFollowupActionLoading}
                   color="warning"
-                  onClick={() => setShowSetSlideThemeModal(true)}
+                  onClick={() => {
+                    if (presentation.defaultTheme) {
+                      setAllSlideColor(presentation.defaultTheme);
+                    }
+                    if (
+                      presentation.getSlideByIndex(currentSlideIndex - 1)
+                        .background
+                    ) {
+                      setCurrentSlideColor(
+                        presentation.getSlideByIndex(currentSlideIndex - 1)
+                          .background,
+                      );
+                    } else if (presentation.defaultTheme) {
+                      setCurrentSlideColor(presentation.defaultTheme);
+                    }
+                    setShowSetSlideThemeModal(true);
+                  }}
                 >
                   <Wallpaper />
                 </Button>
