@@ -20,9 +20,9 @@ import { dashboardPage } from '../utils/routes';
 import { useMutation } from 'react-query';
 import { updateStore } from '../apis/store';
 import { useUserDataContext } from '../context/UserDataContext';
-import { NoteAdd } from '@mui/icons-material';
+import { Backspace, NoteAdd } from '@mui/icons-material';
 
-export const PresentationControls = (props) => {
+export const PresentationControls = ({ currentSlideIndex, presentation }) => {
   const navigation = useNavigate();
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -49,19 +49,21 @@ export const PresentationControls = (props) => {
     },
   });
 
-  const { mutate: inserNewSlide, isLoading: inserNewSlideLoading } =
-    useMutation(updateStore, {
-      onSuccess: (data) => {
-        console.log(data);
-      },
-      onError: (data) => {
-        console.error(data.message);
-      },
-    });
+  const {
+    mutate: mutateWithoutFollowupAction,
+    isLoading: mutateWithoutFollowupActionLoading,
+  } = useMutation(updateStore, {
+    onSuccess: (data) => {
+      console.log(data);
+    },
+    onError: (data) => {
+      console.error(data.message);
+    },
+  });
 
   const handleDeletePresentation = () => {
     const toDeleteIndex = userData.presentations.findIndex(
-      (item) => item.id === parseInt(props.presentation.id),
+      (item) => item.id === parseInt(presentation.id),
     );
 
     if (toDeleteIndex !== -1) {
@@ -76,7 +78,7 @@ export const PresentationControls = (props) => {
 
   const handleEditPresentationTitle = () => {
     const toUpdatePresentation = userData.presentations.find(
-      (item) => item.id === parseInt(props.presentation.id),
+      (item) => item.id === parseInt(presentation.id),
     );
     console.log(toUpdatePresentation);
 
@@ -103,11 +105,18 @@ export const PresentationControls = (props) => {
 
   const handleCreateNewSlide = () => {
     const toUpdatePresentation = userData.presentations.find(
-      (item) => item.id === parseInt(props.presentation.id),
+      (item) => item.id === parseInt(presentation.id),
     );
     toUpdatePresentation.slides.push({});
-    inserNewSlide(userData.toJSON());
+    mutateWithoutFollowupAction(userData.toJSON());
     updateUserData(userData);
+  };
+
+  const handleDeleteCurrentSlide = () => {
+    const targetSlide = userData.presentations.find(
+      (item) => item.id === parseInt(presentation.id),
+    );
+    console.log(currentSlideIndex);
   };
 
   return (
@@ -125,7 +134,7 @@ export const PresentationControls = (props) => {
             textOverflow={'ellipsis'}
           >
             <Typography variant="h5" color={'black'} overflow={'ellipse'}>
-              {props.presentation.title}
+              {presentation.title}
             </Typography>
             <IconButton onClick={() => setShowEditTitleModal(true)}>
               <EditIcon />
@@ -159,11 +168,23 @@ export const PresentationControls = (props) => {
               <Tooltip title="Add new slide">
                 <Button
                   variant="contained"
-                  disabled={inserNewSlideLoading}
+                  disabled={mutateWithoutFollowupActionLoading}
                   color="warning"
                   onClick={() => handleCreateNewSlide()}
                 >
                   <NoteAdd />
+                </Button>
+              </Tooltip>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <Tooltip title="Delete current slide">
+                <Button
+                  variant="contained"
+                  disabled={mutateWithoutFollowupActionLoading}
+                  color="warning"
+                  onClick={() => handleDeleteCurrentSlide()}
+                >
+                  <Backspace />
                 </Button>
               </Tooltip>
             </Grid>

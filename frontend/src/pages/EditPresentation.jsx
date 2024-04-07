@@ -50,22 +50,10 @@ export const EditPresentation = () => {
 
   const { data, isLoading, error } = useUserStorePolling();
 
-  if (isLoading) {
-    return <CircularProgress />;
-  } else if (error) {
-    return (
-      <Snackbar
-        autoHideDuration={6000}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert severity="error" sx={{ width: '90%' }}>
-          {error}
-        </Alert>
-      </Snackbar>
-    );
-  }
-
-  const userData = UserData.fromData(data.store.store);
+  const userData =
+    data && data.store && data.store.store
+      ? UserData.fromData(data.store.store)
+      : new UserData();
 
   const getPresentation = () => {
     return userData.presentations.find(
@@ -74,17 +62,21 @@ export const EditPresentation = () => {
   };
 
   const showLeftArrow =
+    getPresentation() &&
     getPresentation().slides &&
     getPresentation().slides.length >= 2 &&
     currentSlideIndex !== 1;
 
   const showRightArrow =
+    getPresentation() &&
     getPresentation().slides &&
     getPresentation().slides.length >= 2 &&
     currentSlideIndex !== getPresentation().slides.length;
 
   const hasSlides =
-    getPresentation().slides && getPresentation().slides.length !== 0;
+    getPresentation() &&
+    getPresentation().slides &&
+    getPresentation().slides.length !== 0;
 
   const handleNextSlideAction = () => {
     setCurrentSlideIndex(currentSlideIndex + 1);
@@ -111,13 +103,31 @@ export const EditPresentation = () => {
   }, [currentSlideIndex]);
 
   console.log(getPresentation());
+  if (isLoading) {
+    return <CircularProgress />;
+  } else if (error) {
+    return (
+      <Snackbar
+        autoHideDuration={6000}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert severity="error" sx={{ width: '90%' }}>
+          {error}
+        </Alert>
+      </Snackbar>
+    );
+  }
+
   return (
     <div>
       <NavBar />
       <SplitPaneContainer>
         <SplitPane split="vertical" sizes={sizes} onChange={setSizes}>
           <Pane minSize={250} maxSize="37%">
-            <PresentationControls presentation={getPresentation()} />
+            <PresentationControls
+              presentation={getPresentation()}
+              currentSlideIndex={currentSlideIndex}
+            />
           </Pane>
           <SlideContainer>
             {hasSlides && (

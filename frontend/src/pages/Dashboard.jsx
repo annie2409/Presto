@@ -14,7 +14,14 @@ import {
 import { NewPresentationForm } from '../components/NewPresentationForm';
 import { UserDataProvider } from '../context/UserDataContext';
 import { PresentationCardsList } from '../components/PresentationCardsList';
+import styled from 'styled-components';
 
+const DashboardContainer = styled.div`
+  max-height: 92vh;
+  width: 100%;
+  overflow: auto;
+  overflow-y: scroll !important;
+`;
 export const Dashboard = () => {
   const navigation = useNavigate();
   const { user } = useAuthContext();
@@ -45,8 +52,12 @@ export const Dashboard = () => {
   return (
     <UserDataProvider>
       <NavBar />
-      <div>
-        <Container>
+      <DashboardContainer>
+        <Container
+          sx={{
+            height: '100%',
+          }}
+        >
           <Typography variant="h3">Dashboard</Typography>
           <Typography variant="subtitle1">{`Welcome ${user.email}`}</Typography>
           <Button
@@ -67,7 +78,7 @@ export const Dashboard = () => {
           </Modal>
           <PresentationCardsList />
         </Container>
-      </div>
+      </DashboardContainer>
     </UserDataProvider>
   );
 };

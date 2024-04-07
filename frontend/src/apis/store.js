@@ -45,7 +45,6 @@ export const useUserStore = () => {
   const { data, isLoading, error } = useQuery(['useUserStore'], getStore, {
     initialData: () => undefined,
   });
-  console.log(data);
   return { data, isLoading, error };
 };
 
@@ -56,9 +55,5 @@ export const useUserStorePolling = () =>
   });
 
 const getTokenFromSessionStorage = () => {
-  console.log(
-    'Getting token from sesion storage, ',
-    sessionStorage.getItem(LOGGED_IN_USER),
-  );
   return JSON.parse(sessionStorage.getItem(LOGGED_IN_USER)).token;
 };
