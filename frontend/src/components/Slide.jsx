@@ -177,6 +177,8 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
                 </Box>
               );
             } else if (ele.type === SLIDE_ELEMENT_VIDEO) {
+              const url = `${ele.src}?&autoplay=${ele.shouldAutoPlay ? 1 : 0}`;
+              console.log(url);
               return (
                 <Box
                   key={index}
@@ -188,9 +190,10 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
                   zIndex={index}
                 >
                   <iframe
+                    allow="autoplay"
                     width={'100%'}
                     height={'100%'}
-                    src={ele.src}
+                    src={url}
                     allowfullscreen
                   ></iframe>
                 </Box>
