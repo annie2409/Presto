@@ -3,6 +3,7 @@
 export class Slide {
   constructor () {
     this.elements = []
+    this.background = null;
   }
 
   addElement (newElement) {
@@ -18,6 +19,7 @@ export class Slide {
   toJSON () {
     return {
       elements: this.elements,
+      background: this.background,
     }
   }
 
@@ -27,6 +29,9 @@ export class Slide {
       data.elements.forEach(element => {
         slide.addElement(element)
       });
+    }
+    if (data && data.background) {
+      slide.background = data.background;
     }
     return slide;
   }

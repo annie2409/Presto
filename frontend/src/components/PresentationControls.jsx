@@ -28,6 +28,7 @@ import {
   Movie,
   NoteAdd,
   TextFields,
+  Wallpaper,
 } from '@mui/icons-material';
 import Checkbox from '@mui/material/Checkbox';
 import {
@@ -35,7 +36,10 @@ import {
   SLIDE_ELEMENT_IMAGE,
   SLIDE_ELEMENT_TEXT,
   SLIDE_ELEMENT_VIDEO,
+  SLIDE_THEME,
 } from '../utils/constants';
+
+import ColorPicker, { useColorPicker } from 'react-best-gradient-color-picker';
 
 export const PresentationControls = ({ currentSlideIndex, presentation }) => {
   const navigation = useNavigate();
@@ -79,6 +83,18 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
   const [newCodeElementHeight, setNewCodeElementHeight] = useState('');
   const [newCodeElementFontSize, setNewCodeElementFontSize] = useState('');
   const [newCodeElementText, setNewCodeElementText] = useState('');
+
+  const [showSetSlideThemeModal, setShowSetSlideThemeModal] = useState(false);
+  const [currentSlideColor, setCurrentSlideColor] = useState(
+    'rgba(255,255,255,1)',
+  );
+  const {
+    setSolid: setCurrentSlideSolid,
+    setGradient: setCurrentSlideGradient,
+  } = useColorPicker(currentSlideColor, setCurrentSlideColor);
+  const [allSlideColor, setAllSlideColor] = useState('rgba(255,255,255,1)');
+  const { setSolid: setAllSlideSolid, setGradient: setAllSlideGradient } =
+    useColorPicker(currentSlideColor, setCurrentSlideColor);
 
   const { userData, updateUserData } = useUserDataContext();
 
@@ -190,7 +206,7 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
     }
     return 'Unkonwn';
   };
-  console.log(newVideoElementShouldAutoPlay);
+
   const handleCreateNewElement = (e) => {
     e.preventDefault();
     let newElement = {
@@ -260,6 +276,21 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
     setNewVideoElementSrc('');
     setNewVideoElementShouldAutoPlay(false);
     closeNewElementModal();
+  };
+
+  const updateSlideTheme = () => {
+    console.log(allSlideColor, currentSlideColor);
+    const currentPresentation = userData.getPresentationById(presentation.id);
+
+    currentPresentation.defaultTheme = allSlideColor;
+
+    const currentSlide = currentPresentation.getSlideByIndex(
+      currentSlideIndex - 1,
+    );
+    currentSlide.background = currentSlideColor;
+    mutate(userData.toJSON());
+    updateUserData(userData);
+    setShowSetSlideThemeModal(false);
   };
 
   return (
@@ -378,6 +409,18 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
                   onClick={() => createNewElement(SLIDE_ELEMENT_CODE)}
                 >
                   <Code />
+                </Button>
+              </Tooltip>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <Tooltip title="Update slide theme and background">
+                <Button
+                  variant="contained"
+                  disabled={mutateWithoutFollowupActionLoading}
+                  color="warning"
+                  onClick={() => setShowSetSlideThemeModal(true)}
+                >
+                  <Wallpaper />
                 </Button>
               </Tooltip>
             </Grid>
@@ -1089,6 +1132,98 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
             </Box>
           </Box>
         </form>
+      </Modal>
+      <Modal
+        open={showSetSlideThemeModal}
+        onClose={() => setShowSetSlideThemeModal(false)}
+      >
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            minWidth: 600,
+            width: '80%',
+            bgcolor: 'background.paper',
+            border: '2px solid #000',
+            justifyContent: 'center',
+            alignContent: 'center',
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <Typography
+            id="modal-modal-title"
+            variant="h6"
+            component="h2"
+            textAlign={'center'}
+          >
+            Edit slide and presentation theme
+          </Typography>
+          <Grid
+            container
+            spacing={2}
+            justifyContent={'center'}
+            direction={'row'}
+            alignItems={'center'}
+            columns={16}
+          >
+            <Grid item xs={8} sm={8}>
+              <Box
+                display={'flex'}
+                flexDirection={'column'}
+                alignContent={'center'}
+                alignItems={'center'}
+                justifyContent={'flex-start'}
+              >
+                <Typography marginRight={2}>Current slide:</Typography>
+                <ColorPicker
+                  value={currentSlideColor}
+                  onChange={setCurrentSlideColor}
+                />
+              </Box>
+            </Grid>
+            <Grid item xs={8} sm={8}>
+              <Box
+                display={'flex'}
+                flexDirection={'column'}
+                alignContent={'center'}
+                alignItems={'center'}
+                justifyContent={'flex-start'}
+              >
+                <Typography marginRight={2}>All slides:</Typography>
+                <ColorPicker
+                  value={allSlideColor}
+                  onChange={setAllSlideColor}
+                />
+              </Box>
+            </Grid>
+          </Grid>
+          <Box display={'flex'} justifyContent={'center'} marginTop={1}>
+            <Button
+              variant="contained"
+              color="warning"
+              disabled={mutateWithoutFollowupActionLoading}
+              onClick={updateSlideTheme}
+              sx={{
+                marginRight: '0.5em',
+              }}
+            >
+              Confirm
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{
+                marginLeft: '0.5em',
+              }}
+              onClick={closeNewElementModal}
+            >
+              Cancel
+            </Button>
+          </Box>
+        </Box>
       </Modal>
     </>
   );

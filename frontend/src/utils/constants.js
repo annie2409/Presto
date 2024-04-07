@@ -4,3 +4,4 @@ export const SLIDE_ELEMENT_TEXT = 'TEXT';
 export const SLIDE_ELEMENT_IMAGE = 'IMAGE';
 export const SLIDE_ELEMENT_VIDEO = 'VIDEO';
 export const SLIDE_ELEMENT_CODE = 'CODE';
+export const SLIDE_THEME = 'THEME';

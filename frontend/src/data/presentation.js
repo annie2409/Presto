@@ -6,27 +6,29 @@ export class Presentation {
     this.id = id
     this.title = title;
     this.description = description ?? '';
-    this.slides = []
+    this.slides = [];
+    this.defaultTheme = null;
+    this.thumbnail = null;
   }
 
   addSlide (slide) {
     if (!(slide instanceof Slide)) {
-      slide = Slide.fromData(slide)
+      slide = Slide.fromData(slide);
     }
-    this.slides.push(slide)
+    this.slides.push(slide);
   }
 
   addEmptySlide () {
-    this.slides.push(new Slide())
+    this.slides.push(new Slide());
   }
 
   getSlideByIndex (idx) {
     // console.log('GGGG', this.slides)
-    return this.slides[idx]
+    return this.slides[idx];
   }
 
   getThumbnail () {
-    return this.slides.length === 0 ? null : 'COMING SOON' // TODO: Generate thumbnail here
+    return this.thumbnail;
   }
 
   toString () {
@@ -40,16 +42,24 @@ export class Presentation {
       id: this.id,
       title: this.title,
       description: this.description,
-      slides: this.slides.map(slide => slide.toJSON())
+      slides: this.slides.map(slide => slide.toJSON()),
+      thumbnail: this.thumbnail,
+      defaultTheme: this.defaultTheme,
     }
   }
 
   static fromData (data) {
-    const presentation = new Presentation(data.id, data.title, data.description)
+    const presentation = new Presentation(data.id, data.title, data.description);
     if (data.slides) {
       data.slides.forEach(slide => {
-        presentation.addSlide(slide)
+        presentation.addSlide(Slide.fromData(slide));
       });
+    }
+    if (data.thumbnail) {
+      presentation.thumbnail = data.thumbnail;
+    }
+    if (data.defaultTheme) {
+      presentation.defaultTheme = data.defaultTheme;
     }
     return presentation;
   }

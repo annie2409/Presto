@@ -168,6 +168,20 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
     closeEditElementModal();
   };
 
+  let background = '';
+  if (userData) {
+    const presentation = userData.getPresentationById(presentationId);
+    if (presentation) {
+      const slide = presentation.getSlideByIndex(slideNumber - 1);
+      if (slide && slide.background) {
+        background = slide.background;
+      } else if (presentation.defaultTheme) {
+        background = presentation.defaultTheme;
+      }
+    }
+  }
+  console.log(background, userData);
+
   return (
     <>
       <Paper
@@ -175,6 +189,8 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
         sx={{
           width: '75%',
           height: '65%',
+          backgroundColor: background,
+          backgroundImage: background,
         }}
       >
         <PaperContainer>
