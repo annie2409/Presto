@@ -32,7 +32,6 @@ const fallbackRender = ({ error, resetErrorBoundary }) => {
 const App = () => {
   useEffect(() => {
     hljs.highlightAll();
-    hljs.highlightAll();
     hljs.registerLanguage('javascript', javascript);
     hljs.registerLanguage('python', python);
     hljs.registerLanguage('c', c);

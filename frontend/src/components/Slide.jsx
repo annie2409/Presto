@@ -307,6 +307,7 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
                   left={`${parseInt(ele.y)}%`}
                   width={`${ele.width}%`}
                   height={`${ele.height}%`}
+                  fontSize={`${ele.fontSize}em`}
                   zIndex={index}
                   onDoubleClick={() => {
                     setElementToEditIdx(index);
