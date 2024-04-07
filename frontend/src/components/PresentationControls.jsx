@@ -78,12 +78,7 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
   });
 
   const handleDeletePresentation = () => {
-    const toDeleteIndex = userData.presentations.findIndex(
-      (item) => item.id === parseInt(presentation.id),
-    );
-
-    if (toDeleteIndex !== -1) {
-      userData.presentations.splice(toDeleteIndex, 1);
+    if (userData.deletePresentation(presentation.id)) {
       mutate({ ...userData.toJSON(), nextPage: dashboardPage });
     } else {
       setDeleteErrorMessage(
@@ -92,10 +87,9 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
     }
   };
 
-  const handleEditPresentationTitle = () => {
-    const toUpdatePresentation = userData.presentations.find(
-      (item) => item.id === parseInt(presentation.id),
-    );
+  const handleEditPresentationTitle = (e) => {
+    e.preventDefault();
+    const toUpdatePresentation = userData.getPresentationById(presentation.id);
 
     if (toUpdatePresentation) {
       toUpdatePresentation.title = editPresentationTitle;
@@ -124,18 +118,14 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
   };
 
   const handleCreateNewSlide = () => {
-    const toUpdatePresentation = userData.presentations.find(
-      (item) => item.id === parseInt(presentation.id),
-    );
-    toUpdatePresentation.slides.push({});
+    userData.addNewSlideToPresentation(presentation.id);
     mutateWithoutFollowupAction(userData.toJSON());
     updateUserData(userData);
+    console.log(userData);
   };
 
   const handleDeleteCurrentSlide = () => {
-    const target = userData.presentations.find(
-      (item) => item.id === parseInt(presentation.id),
-    );
+    const target = userData.getPresentationById(presentation.id);
     if (target.slides.length === 1) {
       setShowDeletePresentationInsteadModal(true);
     } else {
@@ -164,8 +154,31 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
     return 'Unkonwn';
   };
 
-  const handleCreateNewElement = () => {
-    console.log(modalElementToCreate);
+  const handleCreateNewElement = (e) => {
+    e.preventDefault();
+    let newElement = {
+      x: 0,
+      y: 0,
+    };
+    if (modalElementToCreate === SLIDE_ELEMENT_TEXT) {
+      newElement = {
+        ...newElement,
+        type: SLIDE_ELEMENT_TEXT,
+        width: newTextElementWidth,
+        height: newTextElementHeight,
+        text: newTextElementText,
+        fontSize: `${newTextElementFontSize}em`,
+        fontColor: newTextElementColor,
+      };
+      userData
+        .getPresentationById(presentation.id)
+        .getSlideByIndex(currentSlideIndex - 1)
+        .addElement(newElement);
+      console.log(userData);
+      mutateWithoutFollowupAction(userData.toJSON());
+      updateUserData(userData);
+    }
+    closeNewElementModal();
   };
 
   return (
@@ -309,62 +322,64 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
         </Box>
       </Modal>
       <Modal open={showEditTitleModal} onClose={closeEditTitleModal}>
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            minWidth: 300,
-            width: '40%',
-            bgcolor: 'background.paper',
-            border: '2px solid #000',
-            boxShadow: 24,
-            p: 4,
-          }}
-        >
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Edit presentation title
-          </Typography>
-          {editTitleErrorMessage !== '' && (
-            <Alert severity="error">{editTitleErrorMessage}</Alert>
-          )}
-          <TextField
-            variant="outlined"
-            placeholder="New presentation name"
-            required={true}
-            name="newPresentationName"
-            value={editPresentationTitle}
-            onChange={(e) => setEditPresentationTitle(e.target.value)}
-            margin="normal"
-            sx={{ width: '100%' }}
-            tabIndex={0}
-            autoFocus
-          />
-          <Box display={'flex'} justifyContent={'center'}>
-            <Button
-              variant="contained"
-              color="warning"
-              disabled={isLoading}
-              onClick={() => handleEditPresentationTitle()}
-              sx={{
-                marginRight: '0.5em',
-              }}
-            >
-              Confirm
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{
-                marginLeft: '0.5em',
-              }}
-              onClick={closeEditTitleModal}
-            >
-              Cancel
-            </Button>
+        <form onSubmit={handleEditPresentationTitle}>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              minWidth: 300,
+              width: '40%',
+              bgcolor: 'background.paper',
+              border: '2px solid #000',
+              boxShadow: 24,
+              p: 4,
+            }}
+          >
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              Edit presentation title
+            </Typography>
+            {editTitleErrorMessage !== '' && (
+              <Alert severity="error">{editTitleErrorMessage}</Alert>
+            )}
+            <TextField
+              variant="outlined"
+              placeholder="New presentation name"
+              required={true}
+              name="newPresentationName"
+              value={editPresentationTitle}
+              onChange={(e) => setEditPresentationTitle(e.target.value)}
+              margin="normal"
+              sx={{ width: '100%' }}
+              tabIndex={0}
+              autoFocus
+            />
+            <Box display={'flex'} justifyContent={'center'}>
+              <Button
+                variant="contained"
+                color="warning"
+                disabled={isLoading}
+                type="submit"
+                sx={{
+                  marginRight: '0.5em',
+                }}
+              >
+                Confirm
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{
+                  marginLeft: '0.5em',
+                }}
+                onClick={closeEditTitleModal}
+              >
+                Cancel
+              </Button>
+            </Box>
           </Box>
-        </Box>
+        </form>
       </Modal>
       <Modal
         open={showDeletePresentationInsteadModal}
@@ -422,165 +437,198 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
         </Box>
       </Modal>
       <Modal open={showNewElementModal} onClose={closeNewElementModal}>
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            minWidth: 400,
-            width: '60%',
-            bgcolor: 'background.paper',
-            border: '2px solid #000',
-            justifyContent: 'center',
-            alignContent: 'center',
-            boxShadow: 24,
-            p: 4,
-          }}
-        >
-          <Typography
-            id="modal-modal-title"
-            variant="h6"
-            component="h2"
-            textAlign={'center'}
+        <form onSubmit={handleCreateNewElement}>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              minWidth: 400,
+              width: '60%',
+              bgcolor: 'background.paper',
+              border: '2px solid #000',
+              justifyContent: 'center',
+              alignContent: 'center',
+              boxShadow: 24,
+              p: 4,
+            }}
           >
-            {getNewElementModalTitle()}
-          </Typography>
-          {elementUpdateErrorMessage !== '' && (
-            <Alert severity="error">{elementUpdateErrorMessage}</Alert>
-          )}
-          {modalElementToCreate === SLIDE_ELEMENT_TEXT && (
-            <Grid
-              container
-              spacing={2}
-              justifyContent={'center'}
-              direction={'row'}
-              alignItems={'center'}
-              columns={16}
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+              textAlign={'center'}
             >
-              <Grid item xs={16} sm={8}>
-                <Box
-                  display={'flex'}
-                  flexDirection={'row'}
-                  alignContent={'center'}
-                  alignItems={'center'}
-                  justifyContent={'flex-start'}
-                >
-                  <Typography marginRight={2}>Width:</Typography>
-                  <TextField
-                    variant="outlined"
-                    placeholder="Width (%)"
-                    type="number"
-                    required={true}
-                    inputProps={{
-                      min: 0,
-                      max: 100,
-                    }}
-                    name="widthOfNewElementTextArea"
-                    value={newTextElementWidth}
-                    onChange={(e) => setNewTextElementWidth(e.target.value)}
-                    margin="normal"
-                    tabIndex={0}
-                    autoFocus
-                  />
-                </Box>
+              {getNewElementModalTitle()}
+            </Typography>
+            {elementUpdateErrorMessage !== '' && (
+              <Alert severity="error">{elementUpdateErrorMessage}</Alert>
+            )}
+            {modalElementToCreate === SLIDE_ELEMENT_TEXT && (
+              <Grid
+                container
+                spacing={2}
+                justifyContent={'center'}
+                direction={'row'}
+                alignItems={'center'}
+                columns={16}
+              >
+                <Grid item xs={16} sm={8}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Width:</Typography>
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      placeholder="Width (%)"
+                      type="number"
+                      required={true}
+                      inputProps={{
+                        min: 0,
+                        max: 100,
+                      }}
+                      name="widthOfNewElementTextArea"
+                      value={newTextElementWidth}
+                      onChange={(e) => setNewTextElementWidth(e.target.value)}
+                      margin="normal"
+                      tabIndex={0}
+                      autoFocus
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={16} sm={8}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Height:</Typography>
+                    <TextField
+                      variant="outlined"
+                      fullWidth
+                      placeholder="Height (%)"
+                      required={true}
+                      type="number"
+                      inputProps={{
+                        min: 0,
+                        max: 100,
+                      }}
+                      name="widthOfNewElementTextArea"
+                      value={newTextElementHeight}
+                      onChange={(e) => setNewTextElementHeight(e.target.value)}
+                      margin="normal"
+                      tabIndex={1}
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={16} sm={8}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Font size:</Typography>
+                    <TextField
+                      variant="outlined"
+                      fullWidth
+                      placeholder="Size (em)"
+                      type="number"
+                      required={true}
+                      name="fontSizeOfNewElementTextArea"
+                      value={newTextElementFontSize}
+                      onChange={(e) =>
+                        setNewTextElementFontSize(e.target.value)
+                      }
+                      margin="normal"
+                      tabIndex={2}
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={16} sm={8}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Font color:</Typography>
+                    <TextField
+                      variant="outlined"
+                      fullWidth
+                      placeholder="Color (HEX code)"
+                      required={true}
+                      name="colorOfNewElementTextArea"
+                      value={newTextElementColor}
+                      onChange={(e) =>
+                        setNewTextElementFontColor(e.target.value)
+                      }
+                      margin="normal"
+                      tabIndex={3}
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={16}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Text:</Typography>
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      placeholder="Text to display"
+                      required={true}
+                      name="widthOfNewElementTextArea"
+                      value={newTextElementText}
+                      onChange={(e) => setNewTextElementText(e.target.value)}
+                      margin="normal"
+                      tabIndex={4}
+                      autoFocus
+                    />
+                  </Box>
+                </Grid>
               </Grid>
-              <Grid item xs={16} sm={8}>
-                <Box
-                  display={'flex'}
-                  flexDirection={'row'}
-                  alignContent={'center'}
-                  alignItems={'center'}
-                  justifyContent={'flex-start'}
-                >
-                  <Typography marginRight={2}>Height:</Typography>
-                  <TextField
-                    variant="outlined"
-                    placeholder="Height (%)"
-                    required={true}
-                    type="number"
-                    inputProps={{
-                      min: 0,
-                      max: 100,
-                    }}
-                    name="widthOfNewElementTextArea"
-                    value={newTextElementHeight}
-                    onChange={(e) => setNewTextElementHeight(e.target.value)}
-                    margin="normal"
-                    tabIndex={1}
-                  />
-                </Box>
-              </Grid>
-              <Grid item xs={16} sm={8}>
-                <Box
-                  display={'flex'}
-                  flexDirection={'row'}
-                  alignContent={'center'}
-                  alignItems={'center'}
-                  justifyContent={'flex-start'}
-                >
-                  <Typography marginRight={2}>Font size:</Typography>
-                  <TextField
-                    variant="outlined"
-                    placeholder="Font size (em)"
-                    type="number"
-                    required={true}
-                    name="fontSizeOfNewElementTextArea"
-                    value={newTextElementFontSize}
-                    onChange={(e) => setNewTextElementFontSize(e.target.value)}
-                    margin="normal"
-                    tabIndex={2}
-                  />
-                </Box>
-              </Grid>
-              <Grid item xs={16} sm={8}>
-                <Box
-                  display={'flex'}
-                  flexDirection={'row'}
-                  alignContent={'center'}
-                  alignItems={'center'}
-                  justifyContent={'flex-start'}
-                >
-                  <Typography marginRight={2}>Font color:</Typography>
-                  <TextField
-                    variant="outlined"
-                    placeholder="Color (HEX code)"
-                    required={true}
-                    name="colorOfNewElementTextArea"
-                    value={newTextElementColor}
-                    onChange={(e) => setNewTextElementFontColor(e.target.value)}
-                    margin="normal"
-                    tabIndex={3}
-                  />
-                </Box>
-              </Grid>
-            </Grid>
-          )}
+            )}
 
-          <Box display={'flex'} justifyContent={'center'} marginTop={1}>
-            <Button
-              variant="contained"
-              color="warning"
-              disabled={mutateWithoutFollowupActionLoading}
-              onClick={handleCreateNewElement}
-              sx={{
-                marginRight: '0.5em',
-              }}
-            >
-              Confirm
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{
-                marginLeft: '0.5em',
-              }}
-              onClick={closeNewElementModal}
-            >
-              Cancel
-            </Button>
+            <Box display={'flex'} justifyContent={'center'} marginTop={1}>
+              <Button
+                variant="contained"
+                color="warning"
+                disabled={mutateWithoutFollowupActionLoading}
+                type="submit"
+                sx={{
+                  marginRight: '0.5em',
+                }}
+              >
+                Confirm
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{
+                  marginLeft: '0.5em',
+                }}
+                onClick={closeNewElementModal}
+              >
+                Cancel
+              </Button>
+            </Box>
           </Box>
-        </Box>
+        </form>
       </Modal>
     </>
   );

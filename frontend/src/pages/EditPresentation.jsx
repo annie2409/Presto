@@ -58,9 +58,7 @@ export const EditPresentation = () => {
   //     : new UserData();
 
   const getPresentation = () => {
-    return userData.presentations.find(
-      (item) => item.id === parseInt(presentationId),
-    );
+    return userData.getPresentationById(presentationId);
   };
 
   if (
@@ -121,7 +119,7 @@ export const EditPresentation = () => {
     };
   }, [currentSlideIndex]);
 
-  console.log(getPresentation());
+  // console.log(getPresentation());
   if (isLoading || !getPresentation()) {
     return <CircularProgress />;
   } else if (error) {
@@ -152,7 +150,9 @@ export const EditPresentation = () => {
             {hasSlides && (
               <Slide
                 slideNumber={currentSlideIndex}
-                slideData={getPresentation().slides[currentSlideIndex]}
+                slideData={getPresentation().getSlideByIndex(
+                  currentSlideIndex - 1,
+                )}
               ></Slide>
             )}
 

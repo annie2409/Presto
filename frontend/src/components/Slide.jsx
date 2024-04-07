@@ -8,7 +8,8 @@ const PaperContainer = styled.div`
   height: 100%;
 `;
 
-export const Slide = ({ slideNumber, slideContent }) => {
+export const Slide = ({ slideNumber, slideData }) => {
+  console.log(slideData);
   return (
     <Paper
       elevation={3}
@@ -18,6 +19,15 @@ export const Slide = ({ slideNumber, slideContent }) => {
       }}
     >
       <PaperContainer>
+        {slideData.elements.map((ele, index) => {
+          return (
+            <Box key={index} maxWidth={ele.width} maxHeight={ele.height}>
+              <Typography fontSize={ele.fontSize} color={ele.fontColor}>
+                {ele.text}
+              </Typography>
+            </Box>
+          );
+        })}
         <Box
           maxWidth={50}
           maxHeight={50}
