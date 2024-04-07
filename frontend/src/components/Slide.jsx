@@ -2,6 +2,8 @@ import {
   Alert,
   Box,
   Button,
+  Checkbox,
+  FormControlLabel,
   Grid,
   Modal,
   Paper,
@@ -50,6 +52,12 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
   const [editImageElementSrc, setEditImageElementSrc] = useState('');
   const [editImageElementDescription, setEditImageElementDescription] =
     useState('');
+
+  const [editVideoElementWidth, setEditVideoElementWidth] = useState(null);
+  const [editVideoElementHeight, setEditVideoElementHeight] = useState(null);
+  const [editVideoElementSrc, setEditVideoElementSrc] = useState('');
+  const [editVideoElementShouldAutoplay, setEditVideoElementShouldAutoplay] =
+    useState(null);
 
   const { mutate, isLoading } = useMutation(updateStore, {
     onError: (data) => {
@@ -188,6 +196,17 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
                   width={`${ele.width}%`}
                   height={`${ele.height}%`}
                   zIndex={index}
+                  onDoubleClick={() => {
+                    setElementToEditIdx(index);
+                    setModalElementToEdit(ele.type);
+                    setEditImageElementDescription(ele.description);
+                    setEditImageElementHeight(ele.height);
+                    setEditImageElementWidth(ele.width);
+                    setEditImageElementSrc(ele.src);
+                    setShowEditElementModal(true);
+                    setEditElementPosX(ele.x);
+                    setEditElementPosY(ele.y);
+                  }}
                 >
                   <iframe
                     allow="autoplay"
@@ -552,6 +571,121 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
                       }
                       margin="normal"
                       tabIndex={5}
+                    />
+                  </Box>
+                </Grid>
+              </Grid>
+            )}
+
+            {modalElementToEdit === SLIDE_ELEMENT_VIDEO && (
+              <Grid
+                container
+                spacing={2}
+                justifyContent={'center'}
+                direction={'row'}
+                alignItems={'center'}
+                columns={16}
+              >
+                <Grid item xs={16} sm={8}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Width:</Typography>
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      placeholder="Width (%)"
+                      type="number"
+                      required={true}
+                      inputProps={{
+                        min: 0,
+                        max: 100,
+                      }}
+                      name="videoWidth"
+                      value={editVideoElementWidth}
+                      onChange={(e) => setEditVideoElementWidth(e.target.value)}
+                      margin="normal"
+                      tabIndex={2}
+                      autoFocus
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={16} sm={8}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Height:</Typography>
+                    <TextField
+                      variant="outlined"
+                      fullWidth
+                      placeholder="Height (%)"
+                      required={true}
+                      type="number"
+                      inputProps={{
+                        min: 0,
+                        max: 100,
+                      }}
+                      name="videoHeight"
+                      value={editVideoElementHeight}
+                      onChange={(e) =>
+                        setEditVideoElementHeight(e.target.value)
+                      }
+                      margin="normal"
+                      tabIndex={3}
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={16}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Youtube source:</Typography>
+                    <TextField
+                      variant="outlined"
+                      fullWidth
+                      placeholder="Youtube embeded URL"
+                      required={true}
+                      name="videoSrc"
+                      value={editVideoElementSrc}
+                      onChange={(e) => setEditVideoElementSrc(e.target.value)}
+                      margin="normal"
+                      tabIndex={4}
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={16}>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                  >
+                    <Typography marginRight={2}>Should autoplay:</Typography>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          label="Indicate whether the video will auto play or not"
+                          tabIndex={5}
+                          margin="normal"
+                          checked={editVideoElementShouldAutoplay}
+                          onChange={(e) =>
+                            setEditVideoElementShouldAutoplay(e.target.checked)
+                          }
+                        />
+                      }
                     />
                   </Box>
                 </Grid>
