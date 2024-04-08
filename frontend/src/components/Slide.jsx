@@ -47,7 +47,6 @@ export const Slide = ({
   slideData,
   isPreview = false,
 }) => {
-  const theme = useTheme();
   const defaultFontFamily = [
     '-apple-system',
     'BlinkMacSystemFont',
@@ -141,7 +140,7 @@ export const Slide = ({
 
   const handleElementUpdate = (e) => {
     e.preventDefault();
-    console.log(userData);
+
     const currentElement = userData
       .getPresentationById(presentationId)
       .getSlideByIndex(slideNumber - 1).elements[elementToEditIdx];
@@ -185,7 +184,6 @@ export const Slide = ({
       }
     }
   }
-  console.log(background, userData);
 
   return (
     <>

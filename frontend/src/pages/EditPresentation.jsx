@@ -1,6 +1,6 @@
 import { Alert, CircularProgress, Snackbar, Typography } from '@mui/material';
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import SplitPane from 'split-pane-react/esm/SplitPane';
 import { Pane } from 'split-pane-react';
@@ -10,6 +10,7 @@ import { Slide } from '../components/Slide';
 import styled from 'styled-components';
 import { useUserDataContext } from '../context/UserDataContext';
 import { SlideControls } from '../components/SlideControls';
+import { editPresentationPageAtSlideFor } from '../utils/routes';
 
 const SlideContainer = styled.div`
   height: 100%;
@@ -25,18 +26,19 @@ const SplitPaneContainer = styled.div`
 `;
 
 export const EditPresentation = () => {
-  const { presentationId } = useParams();
+  const { presentationId, slide } = useParams();
+  const navigation = useNavigate();
 
   const [sizes, setSizes] = useState([150, '30%', 'auto']);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(1);
 
-  // const { data, isLoading, error } = useUserStorePolling();
-  const { userData, isLoading, error, updateUserData } = useUserDataContext();
+  useEffect(() => {
+    if (slide) {
+      setCurrentSlideIndex(parseInt(slide));
+    }
+  }, [slide]);
 
-  // const userData =
-  //   data && data.store && data.store.store
-  //     ? UserData.fromData(data.store.store)
-  //     : new UserData();
+  const { userData, isLoading, error } = useUserDataContext();
 
   const getPresentation = () => {
     return userData.getPresentationById(presentationId);
@@ -77,11 +79,17 @@ export const EditPresentation = () => {
     getPresentation().slides.length !== 0;
 
   const handleNextSlideAction = () => {
-    setCurrentSlideIndex(currentSlideIndex + 1);
+    console.log(currentSlideIndex);
+    navigation(
+      editPresentationPageAtSlideFor(presentationId, currentSlideIndex + 1),
+    );
   };
 
   const handlePreviousSlideAction = () => {
-    setCurrentSlideIndex(currentSlideIndex - 1);
+    console.log(currentSlideIndex, typeof currentSlideIndex);
+    navigation(
+      editPresentationPageAtSlideFor(presentationId, currentSlideIndex - 1),
+    );
   };
 
   const handleKeyPress = (event) => {
@@ -99,8 +107,6 @@ export const EditPresentation = () => {
       window.removeEventListener('keydown', handleKeyPress);
     };
   }, [currentSlideIndex]);
-
-  // console.log(getPresentation());
   if (isLoading || !getPresentation()) {
     return <CircularProgress />;
   } else if (error) {

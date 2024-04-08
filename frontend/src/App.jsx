@@ -7,7 +7,7 @@ import { Dashboard } from './pages/Dashboard';
 import { ErrorBoundary } from 'react-error-boundary';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { AuthProvider } from './context/AuthContext';
-import { dashboardPage, loginPage, editPresentationPage, registerPage, previewPresentationPage } from './utils/routes';
+import { dashboardPage, loginPage, editPresentationPage, registerPage, previewPresentationPage, editPresentationPageAtSlide, previewPresentationPageAtSlide } from './utils/routes';
 import { EditPresentation } from './pages/EditPresentation';
 import { UserDataProvider } from './context/UserDataContext';
 import hljs from 'highlight.js';
@@ -56,7 +56,17 @@ const App = () => {
                   <EditPresentation/>
                 </UserDataProvider>
               }/>
+              <Route path={editPresentationPageAtSlide} element={
+                <UserDataProvider>
+                  <EditPresentation/>
+                </UserDataProvider>
+              }/>
               <Route path={previewPresentationPage} element={
+                <UserDataProvider>
+                  <PreviewPresentation/>
+                </UserDataProvider>
+              }/>
+              <Route path={previewPresentationPageAtSlide} element={
                 <UserDataProvider>
                   <PreviewPresentation/>
                 </UserDataProvider>
