@@ -31,7 +31,7 @@ import c from 'highlight.js/lib/languages/c';
 import { useTheme } from '@mui/material/styles';
 import Dropdown from './Dropdown';
 
-const PaperContainer = styled.div`
+export const PaperContainer = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
@@ -41,7 +41,12 @@ const EditElementToolContainer = styled.div`
   position: relative;
 `;
 
-export const Slide = ({ presentationId, slideNumber, slideData }) => {
+export const Slide = ({
+  presentationId,
+  slideNumber,
+  slideData,
+  isPreview = false,
+}) => {
   const theme = useTheme();
   const defaultFontFamily = [
     '-apple-system',
@@ -187,8 +192,8 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
       <Paper
         elevation={3}
         sx={{
-          width: '75%',
-          height: '65%',
+          width: isPreview ? '100%' : '75%',
+          height: isPreview ? '100%' : '65%',
           backgroundColor: background,
           backgroundImage: background,
         }}
@@ -200,7 +205,9 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
                 <Box
                   onContextMenu={(e) => {
                     e.preventDefault();
-                    deleteElement(index);
+                    if (!isPreview) {
+                      deleteElement(index);
+                    }
                   }}
                   key={index}
                   position={'absolute'}
@@ -210,20 +217,22 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
                   left={`${parseInt(ele.y)}%`}
                   overflow={'hidden'}
                   textOverflow={'clip'}
-                  border={'0.75px solid #ddd'}
+                  border={isPreview ? 'none' : '0.75px solid #ddd'}
                   zIndex={index}
                   onDoubleClick={() => {
-                    setElementToEditIdx(index);
-                    setModalElementToEdit(ele.type);
-                    setEditTextElementFontColor(ele.fontColor);
-                    setEditTextElementFontSize(ele.fontSize);
-                    setEditTextElementHeight(ele.height);
-                    setEditTextElementWidth(ele.width);
-                    setEditTextElementText(ele.text);
-                    setShowEditElementModal(true);
-                    setEditElementPosX(ele.x);
-                    setEditElementPosY(ele.y);
-                    setEditTextElementFontFamily(ele.fontFamily);
+                    if (!isPreview) {
+                      setElementToEditIdx(index);
+                      setModalElementToEdit(ele.type);
+                      setEditTextElementFontColor(ele.fontColor);
+                      setEditTextElementFontSize(ele.fontSize);
+                      setEditTextElementHeight(ele.height);
+                      setEditTextElementWidth(ele.width);
+                      setEditTextElementText(ele.text);
+                      setShowEditElementModal(true);
+                      setEditElementPosX(ele.x);
+                      setEditElementPosY(ele.y);
+                      setEditTextElementFontFamily(ele.fontFamily);
+                    }
                   }}
                 >
                   {ele.fontFamily && (
@@ -262,17 +271,24 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
                   height={`${ele.height}%`}
                   zIndex={index}
                   onDoubleClick={() => {
-                    setElementToEditIdx(index);
-                    setModalElementToEdit(ele.type);
-                    setEditImageElementDescription(ele.description);
-                    setEditImageElementHeight(ele.height);
-                    setEditImageElementWidth(ele.width);
-                    setEditImageElementSrc(ele.src);
-                    setShowEditElementModal(true);
-                    setEditElementPosX(ele.x);
-                    setEditElementPosY(ele.y);
+                    if (!isPreview) {
+                      setElementToEditIdx(index);
+                      setModalElementToEdit(ele.type);
+                      setEditImageElementDescription(ele.description);
+                      setEditImageElementHeight(ele.height);
+                      setEditImageElementWidth(ele.width);
+                      setEditImageElementSrc(ele.src);
+                      setShowEditElementModal(true);
+                      setEditElementPosX(ele.x);
+                      setEditElementPosY(ele.y);
+                    }
                   }}
-                  onContextMenu={() => deleteElement(index)}
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    if (!isPreview) {
+                      deleteElement(index);
+                    }
+                  }}
                 >
                   <img
                     src={ele.src}
@@ -296,15 +312,17 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
                   onMouseEnter={() => setShowElementEditTools(true)}
                   onMouseLeave={() => setShowElementEditTools(false)}
                   onDoubleClick={() => {
-                    setElementToEditIdx(index);
-                    setModalElementToEdit(ele.type);
-                    setEditImageElementDescription(ele.description);
-                    setEditImageElementHeight(ele.height);
-                    setEditImageElementWidth(ele.width);
-                    setEditImageElementSrc(ele.src);
-                    setShowEditElementModal(true);
-                    setEditElementPosX(ele.x);
-                    setEditElementPosY(ele.y);
+                    if (!isPreview) {
+                      setElementToEditIdx(index);
+                      setModalElementToEdit(ele.type);
+                      setEditVideoElementHeight(ele.height);
+                      setEditVideoElementWidth(ele.width);
+                      setEditVideoElementSrc(ele.src);
+                      setEditVideoElementShouldAutoplay(ele.shouldAutoPlay);
+                      setShowEditElementModal(true);
+                      setEditElementPosX(ele.x);
+                      setEditElementPosY(ele.y);
+                    }
                   }}
                 >
                   <iframe
@@ -358,6 +376,9 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
                   fontSize={`${ele.fontSize}em`}
                   zIndex={index}
                   onDoubleClick={() => {
+                    if (isPreview) {
+                      return;
+                    }
                     setElementToEditIdx(index);
                     setModalElementToEdit(ele.type);
                     setEditCodeElementHeight(ele.height);
@@ -368,7 +389,12 @@ export const Slide = ({ presentationId, slideNumber, slideData }) => {
                     setEditElementPosX(ele.x);
                     setEditElementPosY(ele.y);
                   }}
-                  onContextMenu={() => deleteElement(index)}
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    if (!isPreview) {
+                      deleteElement(index);
+                    }
+                  }}
                 >
                   <pre>
                     <code>{ele.code}</code>

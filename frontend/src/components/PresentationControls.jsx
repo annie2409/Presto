@@ -17,7 +17,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { dashboardPage } from '../utils/routes';
+import { dashboardPage, previewPresentationPageFor } from '../utils/routes';
 import { useMutation } from 'react-query';
 import { updateStore } from '../apis/store';
 import { useUserDataContext } from '../context/UserDataContext';
@@ -27,6 +27,7 @@ import {
   Image,
   Movie,
   NoteAdd,
+  RemoveRedEye,
   TextFields,
   Wallpaper,
 } from '@mui/icons-material';
@@ -432,6 +433,21 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
                   }}
                 >
                   <Wallpaper />
+                </Button>
+              </Tooltip>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <Tooltip title="Preview presentation">
+                <Button
+                  variant="contained"
+                  color="warning"
+                  onClick={() => {
+                    const url = window.location.href;
+                    const trimmedUrl = url.slice(0, url.lastIndexOf('/edit'));
+                    window.open(`${trimmedUrl}/preview`);
+                  }}
+                >
+                  <RemoveRedEye />
                 </Button>
               </Tooltip>
             </Grid>

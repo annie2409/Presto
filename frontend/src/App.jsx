@@ -7,7 +7,7 @@ import { Dashboard } from './pages/Dashboard';
 import { ErrorBoundary } from 'react-error-boundary';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { AuthProvider } from './context/AuthContext';
-import { dashboardPage, loginPage, editPresentationPage, registerPage } from './utils/routes';
+import { dashboardPage, loginPage, editPresentationPage, registerPage, previewPresentationPage } from './utils/routes';
 import { EditPresentation } from './pages/EditPresentation';
 import { UserDataProvider } from './context/UserDataContext';
 import hljs from 'highlight.js';
@@ -15,6 +15,7 @@ import 'highlight.js/styles/github.css';
 import javascript from 'highlight.js/lib/languages/javascript';
 import python from 'highlight.js/lib/languages/python';
 import c from 'highlight.js/lib/languages/c';
+import { PreviewPresentation } from './pages/PreviewPresentation';
 
 const queryClient = new QueryClient();
 
@@ -53,6 +54,11 @@ const App = () => {
               <Route path={editPresentationPage} element={
                 <UserDataProvider>
                   <EditPresentation/>
+                </UserDataProvider>
+              }/>
+              <Route path={previewPresentationPage} element={
+                <UserDataProvider>
+                  <PreviewPresentation/>
                 </UserDataProvider>
               }/>
             </Routes>
