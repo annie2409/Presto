@@ -24,6 +24,7 @@ export const SlideControls = ({
       {showLeftArrow && (
         <Tooltip title="Previous slide">
           <IconButton
+            aria-label="Previous slide"
             onClick={handlePreviousSlideAction}
             data-testid="previous-button"
           >
@@ -33,7 +34,11 @@ export const SlideControls = ({
       )}
       {showRightArrow && (
         <Tooltip title="Next slide">
-          <IconButton onClick={handleNextSlideAction} data-testid="next-button">
+          <IconButton
+            aria-label="Next slide"
+            onClick={handleNextSlideAction}
+            data-testid="next-button"
+          >
             <KeyboardArrowRightRounded />
           </IconButton>
         </Tooltip>

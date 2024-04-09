@@ -71,6 +71,7 @@ const NavBar = () => {
             </Link>
           ))}
           <Button
+            aria-label="Log out"
             color="inherit"
             sx={{ color: 'white' }}
             disabled={isLoading}

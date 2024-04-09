@@ -320,6 +320,7 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
             <Grid item xs={12} sm={6} md={4} lg={3}>
               <Tooltip title="Go back to dashboard">
                 <Button
+                  aria-label="Go back"
                   variant="contained"
                   color="warning"
                   onClick={() => navigation(dashboardPage)}
@@ -331,6 +332,7 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
             <Grid item xs={12} sm={6} md={4} lg={3}>
               <Tooltip title="Delete presentation">
                 <Button
+                  aria-label="Delete presentation"
                   variant="contained"
                   color="warning"
                   onClick={() => setShowDeleteModal(true)}
@@ -342,6 +344,7 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
             <Grid item xs={12} sm={6} md={4} lg={3}>
               <Tooltip title="Add new slide">
                 <Button
+                  aria-label="Add new slide"
                   variant="contained"
                   disabled={mutateWithoutFollowupActionLoading}
                   color="warning"
@@ -491,6 +494,7 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
           )}
           <Box display={'flex'} justifyContent={'center'}>
             <Button
+              aria-label="Confirm"
               variant="contained"
               color="error"
               disabled={isLoading}
@@ -502,6 +506,7 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
               Yes
             </Button>
             <Button
+              aria-label="Cancel"
               variant="contained"
               color="primary"
               sx={{
