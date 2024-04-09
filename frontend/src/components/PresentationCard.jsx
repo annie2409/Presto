@@ -31,9 +31,10 @@ export const PresentationCard = ({ presentation }) => {
         aspectRatio: 2,
         overflow: 'hidden',
         backgroundImage:
-          presentation.getThumbnail() === null
+          presentation.getThumbnail() === null ||
+          presentation.getThumbnail() === ''
             ? 'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABtJREFUeNpiZGBgaGAgAjAxEAlGFVJHIUAAAABJRU5ErkJggg==")'
-            : 'todo',
+            : `url(${presentation.getThumbnail()})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         cursor: 'pointer',

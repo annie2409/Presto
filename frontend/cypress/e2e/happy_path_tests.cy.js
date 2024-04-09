@@ -39,5 +39,8 @@ context('Happy path flow described in assignment spec', () => {
     // TODO: Update thumbnail
 
     cy.get('[aria-label="Edit"]').click();
+
+    const thumbail =
+      'https://sm.ign.com/t/ign_za/lists/t/the-12-bes/the-12-best-sonic-characters-in-the-series-ranked_kujt.1280.jpg';
   });
 });

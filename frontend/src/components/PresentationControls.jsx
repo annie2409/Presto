@@ -55,6 +55,8 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
   const [showEditTitleModal, setShowEditTitleModal] = useState(false);
   const [editTitleErrorMessage, setEditTitleErrorMessage] = useState('');
   const [editPresentationTitle, setEditPresentationTitle] = useState('');
+  const [editPresentationThumbnail, setEditPresentationThumbnail] =
+    useState('');
 
   const [showNewElementModal, setShowNewElementModal] = useState(false);
   const [elementUpdateErrorMessage, setElementUpdateErrorMessage] =
@@ -136,6 +138,9 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
 
     if (toUpdatePresentation) {
       toUpdatePresentation.title = editPresentationTitle;
+      if (editPresentationThumbnail && editPresentationThumbnail !== '') {
+        toUpdatePresentation.thumbnail = editPresentationThumbnail;
+      }
       mutate(userData.toJSON());
     } else {
       setEditTitleErrorMessage(
@@ -538,6 +543,17 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
               name="newPresentationName"
               value={editPresentationTitle}
               onChange={(e) => setEditPresentationTitle(e.target.value)}
+              margin="normal"
+              sx={{ width: '100%' }}
+              tabIndex={0}
+              autoFocus
+            />
+            <TextField
+              variant="outlined"
+              placeholder="Thumbnail image source url"
+              name="thumbnail"
+              value={editPresentationThumbnail}
+              onChange={(e) => setEditPresentationThumbnail(e.target.value)}
               margin="normal"
               sx={{ width: '100%' }}
               tabIndex={0}
