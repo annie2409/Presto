@@ -17,7 +17,7 @@ export const PresentationCard = ({ presentation }) => {
   const isSmallScreen = useMediaQuery('(max-width:290px)');
   const isTinyScreen = useMediaQuery('(max-width:230px)');
   const navigation = useNavigate();
-  console.log(presentation);
+
   return (
     <Card
       variant="outlined"

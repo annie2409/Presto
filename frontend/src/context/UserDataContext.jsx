@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { UserData } from '../data/userData';
-import { useUserStore, useUserStorePolling } from '../apis/store';
+import { useUserStorePolling } from '../apis/store';
 
-const UserDataContext = React.createContext(new UserData());
+export const UserDataContext = React.createContext(new UserData());
 
 export const useUserDataContext = () => useContext(UserDataContext);
 
