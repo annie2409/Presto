@@ -13,11 +13,13 @@ const Dropdown = ({ title, options, preSelect, onSelect }) => {
     <FormControl fullWidth>
       <InputLabel id="dropdown-label">{title}</InputLabel>
       <Select
+        native={true}
         labelId="dropdown-label"
         id="dropdown"
         value={selectedValue}
         onChange={handleChange}
         label="Select an option"
+        data-testid="dropdown-select"
       >
         {options.map((option, index) => {
           return (

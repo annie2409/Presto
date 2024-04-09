@@ -79,14 +79,12 @@ export const EditPresentation = () => {
     getPresentation().slides.length !== 0;
 
   const handleNextSlideAction = () => {
-    console.log(currentSlideIndex);
     navigation(
       editPresentationPageAtSlideFor(presentationId, currentSlideIndex + 1),
     );
   };
 
   const handlePreviousSlideAction = () => {
-    console.log(currentSlideIndex, typeof currentSlideIndex);
     navigation(
       editPresentationPageAtSlideFor(presentationId, currentSlideIndex - 1),
     );
