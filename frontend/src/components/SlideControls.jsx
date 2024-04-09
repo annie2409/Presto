@@ -23,14 +23,17 @@ export const SlideControls = ({
     <BottomRightButtonsContainer>
       {showLeftArrow && (
         <Tooltip title="Previous slide">
-          <IconButton onClick={handlePreviousSlideAction}>
+          <IconButton
+            onClick={handlePreviousSlideAction}
+            data-testid="previous-button"
+          >
             <KeyboardArrowLeftRounded />
           </IconButton>
         </Tooltip>
       )}
       {showRightArrow && (
         <Tooltip title="Next slide">
-          <IconButton onClick={handleNextSlideAction}>
+          <IconButton onClick={handleNextSlideAction} data-testid="next-button">
             <KeyboardArrowRightRounded />
           </IconButton>
         </Tooltip>
