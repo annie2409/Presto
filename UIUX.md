@@ -1,0 +1,12 @@
+- Use of pop up menu that appears on VIDEO element hover to provide delete and edit capability for VIDEOs since double click and right click does not work eactly.
+- Ease of navigation back to dashboard through nav bar along with navigation button.
+- Clear contrast of background color and texts.
+- Good alignment of fields in all the modal forms.
+- Good alignment of buttons on the tools in edit presentation page.
+- The split pane in the edit presentation page to provide better ease of use to allow users to manage the size of the presentation and tools.
+- Using harmonious set of colors overall to make button stand up.
+- Integration with color picker to change slide background and theme to provide an easy to use color picker tool.
+- Responsive and aligbment grid on the dashboard, edit presentation tool box and the forms.
+- In forms, small fields lay out are responsive to page width. For example, when page is wide, 2 fields will fit into one row while in narrow window, it will go into one line per field.
+- Consistent use of Typography.
+- - Provide affordance through common pattern icon selections which represent their functionality.

@@ -1,0 +1,8 @@
+- Component testing on Dropdown component
+  - Check mouse event interactions with the component.
+  - Validate rendering
+- Component testing on PresentationCardList component
+  - Test useContext hook wrapped around a component and whether data is being correctly processed by the component.
+  - Check the loading state which relates to how react query works and the different state of the component.
+- Component testing on SlideControls
+  - Test if the props put into the component are being correctly triggered
