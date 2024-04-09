@@ -61,6 +61,7 @@ export const Dashboard = () => {
           <Typography variant="h3">Dashboard</Typography>
           <Typography variant="subtitle1">{`Welcome ${user.email}`}</Typography>
           <Button
+            data-test-target="newPresentationButton"
             variant="contained"
             color="warning"
             onClick={() => setIsNewPresentationModalOpen(true)}

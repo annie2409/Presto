@@ -307,7 +307,7 @@ export const PresentationControls = ({ currentSlideIndex, presentation }) => {
               {presentation.title}
             </Typography>
             <IconButton onClick={() => setShowEditTitleModal(true)}>
-              <EditIcon />
+              <EditIcon aria-label="Edit" />
             </IconButton>
           </Box>
 
