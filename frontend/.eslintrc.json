@@ -28,8 +28,7 @@
         "semi": 0,
         "comma-dangle": 0,
         "react/prop-types": 0,
-        "prettier/prettier": ["error", { "singleQuote": true }],
-        "no-unused-vars": 0
+        "prettier/prettier": ["error", { "singleQuote": true }]
     },
     "settings": {
         "react": {

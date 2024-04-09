@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useUserDataContext } from '../context/UserDataContext';
-import { PaperContainer, Slide } from '../components/Slide';
+import { Slide } from '../components/Slide';
 import styled from 'styled-components';
 import { Alert, CircularProgress, Snackbar } from '@mui/material';
 import { SlideControls } from '../components/SlideControls';
-import {
-  editPresentationPageAtSlideFor,
-  previewPresentationPageAtSlideFor,
-} from '../utils/routes';
+import { previewPresentationPageAtSlideFor } from '../utils/routes';
 
 const PresentationPreviewContaner = styled.div`
   width: 100wh;

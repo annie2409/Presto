@@ -28,7 +28,6 @@ import 'highlight.js/styles/github.css';
 import javascript from 'highlight.js/lib/languages/javascript';
 import python from 'highlight.js/lib/languages/python';
 import c from 'highlight.js/lib/languages/c';
-import { useTheme } from '@mui/material/styles';
 import Dropdown from './Dropdown';
 
 export const PaperContainer = styled.div`
