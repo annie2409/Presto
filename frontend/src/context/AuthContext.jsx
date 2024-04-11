@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { LOGGED_IN_USER } from '../utils/constants.js';
-import { LoggedInUser } from '../data/loggedInUser.js';
+import { LoggedInUser } from '../data/currentUser.js';
 
 const AuthContext = React.createContext(null);
 
