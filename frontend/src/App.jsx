@@ -7,7 +7,15 @@ import { Dashboard } from './pages/Dashboard';
 import { ErrorBoundary } from 'react-error-boundary';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { AuthProvider } from './context/AuthContext';
-import { dashboardPage, loginPage, editPresentationPage, registerPage, previewPresentationPage, editPresentationPageAtSlide, previewPresentationPageAtSlide } from './utils/routes';
+import {
+  dashboardPage,
+  loginPage,
+  editPresentationPage,
+  registerPage,
+  previewPresentationPage,
+  editPresentationPageAtSlide,
+  previewPresentationPageAtSlide,
+} from './utils/routes';
 import { EditPresentation } from './pages/EditPresentation';
 import { UserDataProvider } from './context/UserDataContext';
 import hljs from 'highlight.js';
@@ -23,7 +31,7 @@ const fallbackRender = ({ error, resetErrorBoundary }) => {
   // Call resetErrorBoundary() to reset the error boundary and retry the render.
 
   return (
-    <div role="alert">
+    <div role='alert'>
       <p>Something went wrong:</p>
       <pre style={{ color: 'red' }}>{error.message}</pre>
     </div>
@@ -44,33 +52,49 @@ const App = () => {
         <ErrorBoundary fallbackRender={fallbackRender}>
           <BrowserRouter>
             <Routes>
+              <Route path='/' element={<Login />} />
               <Route path={loginPage} element={<Login />} />
               <Route path={registerPage} element={<Register />} />
-              <Route path={dashboardPage} element={
-                <UserDataProvider>
-                  <Dashboard />
-                </UserDataProvider>
-              }/>
-              <Route path={editPresentationPage} element={
-                <UserDataProvider>
-                  <EditPresentation/>
-                </UserDataProvider>
-              }/>
-              <Route path={editPresentationPageAtSlide} element={
-                <UserDataProvider>
-                  <EditPresentation/>
-                </UserDataProvider>
-              }/>
-              <Route path={previewPresentationPage} element={
-                <UserDataProvider>
-                  <PreviewPresentation/>
-                </UserDataProvider>
-              }/>
-              <Route path={previewPresentationPageAtSlide} element={
-                <UserDataProvider>
-                  <PreviewPresentation/>
-                </UserDataProvider>
-              }/>
+              <Route
+                path={dashboardPage}
+                element={
+                  <UserDataProvider>
+                    <Dashboard />
+                  </UserDataProvider>
+                }
+              />
+              <Route
+                path={editPresentationPage}
+                element={
+                  <UserDataProvider>
+                    <EditPresentation />
+                  </UserDataProvider>
+                }
+              />
+              <Route
+                path={editPresentationPageAtSlide}
+                element={
+                  <UserDataProvider>
+                    <EditPresentation />
+                  </UserDataProvider>
+                }
+              />
+              <Route
+                path={previewPresentationPage}
+                element={
+                  <UserDataProvider>
+                    <PreviewPresentation />
+                  </UserDataProvider>
+                }
+              />
+              <Route
+                path={previewPresentationPageAtSlide}
+                element={
+                  <UserDataProvider>
+                    <PreviewPresentation />
+                  </UserDataProvider>
+                }
+              />
             </Routes>
           </BrowserRouter>
         </ErrorBoundary>
